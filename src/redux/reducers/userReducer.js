@@ -3,7 +3,9 @@ const initialState = {
     isVerified: false,
     loader: false,
     workspaces: null, 
-    employees: []
+    employees: [],
+    roles: [],
+    groups: []
 }
 
 
@@ -90,6 +92,24 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 employees: state.employees.map(employee => employee._id === action.payload._id ? action.payload : employee),
+                loader: false
+            }
+        case "SET_ROLE":
+            return {
+                ...state,
+                roles: [...state.roles, action.payload],
+                loader: false
+            }
+        case "SET_ROLES":
+            return {
+                ...state,
+                roles: action.payload,
+                loader: false
+            }
+        case "SET_GROUP":
+            return {
+                ...state,
+                groups: [action.payload, ...state.groups],
                 loader: false
             }
         default:

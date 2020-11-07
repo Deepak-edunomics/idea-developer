@@ -1,19 +1,32 @@
 import React, { useState } from 'react'
+import { useEffect } from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 
-import {addWorkspace} from '../redux/actions/userAction'
+import { addWorkspace } from '../redux/actions/userAction'
 
 
 
 const AddWorkspace = () => {
-    const userData = useSelector(store=>store.userRoot)
+    const userData = useSelector(store => store.userRoot)
+    
+    
     const dispatch = useDispatch()
 
-    const [workspace, setWorkspace] = useState("")
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
+    const [moderator, setModerator] = useState("")
+    const [challengetype, setChallengeType] = useState("")
+    const [moderators, setModerators] = useState([])
+
+    
+    useEffect(() => {
+        setModerators(userData.employees.filter(emp => emp.role === "moderator"))
+    },[userData.employees])
+
 
     const workspaceFormHandler = (e) => {
         e.preventDefault()
-        dispatch(addWorkspace({title: workspace}))
+        // dispatch(addWorkspace({title: }))
         
     }
     return (
@@ -30,19 +43,25 @@ const AddWorkspace = () => {
                         <form onSubmit={workspaceFormHandler}>
                             <div className="form-group">
                                 <label htmlFor="addWorkspaceId">Title</label>
-                                <input onChange={(e) => setWorkspace(e.target.value)} value={workspace} type="text" className="form-control" id="addWorkspaceId" />
+                                <input onChange={(e) => setTitle(e.target.value)} value={title} type="text" className="form-control" id="addWorkspaceId" />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="addWorkspaceId">Description</label>
-                                <textarea onChange={(e) => setWorkspace(e.target.value)} value={workspace} type="text" className="form-control" id="addWorkspaceId" />
+                                <textarea onChange={(e) => setDescription(e.target.value)} value={description} type="text" className="form-control" id="addWorkspaceId" />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="addWorkspaceId">Moderator</label>
-                                <input onChange={(e) => setWorkspace(e.target.value)} value={workspace} type="text" className="form-control" id="addWorkspaceId" />
+                                <label htmlFor="employeeRole">Role</label>
+                                <select onChange={(e) => setModerator(e.target.value)} value={moderator} className="form-control">
+                                    <option>Select</option>
+                                    {moderators.map(mod =>
+                                        <option key={mod._id} value={mod._id}>{mod.firstName + " " + mod.lastName}</option>
+
+                                        )}
+                                </select>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="addWorkspaceId">Challenge Type</label>
-                                <input onChange={(e) => setWorkspace(e.target.value)} value={workspace} type="text" className="form-control" id="addWorkspaceId" />
+                                <input onChange={(e) => setChallengeType(e.target.value)} value={challengetype} type="text" className="form-control" id="addWorkspaceId" />
                             </div>
                             <button type="submit" className="btn btn-primary">Add</button>
                         </form>

@@ -24,6 +24,9 @@ import AddWorkSpace from './pages/WorkSpace/AddWorkSpace'
 import AddChallenge from './pages/WorkSpace/AddChallenge'
 import WorkFlow from './pages/WorkSpace/WorkFlow'
 
+import Roles from './pages/Roles'
+import Groups from './pages/Groups'
+
 
 import LoginForm from './components/LoginForm'
 import RegisterForm from './components/RegisterForm'
@@ -32,7 +35,7 @@ import LogoutModal from './components/LogoutModal'
 import ResetPassword from './components/ResetPassword'
 
 //Admin
-import AdminDashboard from './pages/Admin/AdminDashboard'
+import Employees from './pages/Employees'
 
 //Pages
 import ForgotPassword from './pages/ForgotPassword'
@@ -53,9 +56,6 @@ if (window.localStorage.userJwtToken) {
 
 
 function App() {
- 
- 
-  
   return (
     <div className="App">
       <Router>
@@ -79,7 +79,9 @@ function App() {
           <Route exact path="/reports" component={Reports} />
           <Route exact path="/createGroup" component={CreateGroup} />
           <Route exact path="/forgotPassword" component={ForgotPassword} />
-          <Route exact path="/employees" component={AdminDashboard} />
+          <Route exact path="/employees" component={Employees} />
+          <Route exact path="/roles" component={Roles} />
+          <Route exact path="/groups" component={Groups} />
         </Switch>
       </Router>
     </div>

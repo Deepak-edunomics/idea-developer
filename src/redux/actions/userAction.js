@@ -11,8 +11,6 @@ export const userLoginHelper = (data) => {
 }
 
 
-
-
 const loaderHelper = (data) => {
     return {
         type: "SET_LOADER",
@@ -203,6 +201,141 @@ export const getEmployees = () => {
     }
 }
 
+export const createRole = (roleCredential) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: "http://idea.cxdeployer.com/api/permission/role",
+                data: roleCredential
+            })
+            if (data.success === "true") {
+                dispatch({
+                    type: "SET_ROLE",
+                    payload: data.permission
+                })
+            }
+        }
+        catch (err) {
+            console.log("Error in createRole", err.response)
+        }
+    }
+}
+
+export const getRoles = () => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: "http://idea.cxdeployer.com/api/permission/role",
+            })
+            dispatch(loaderHelper(false))
+            if (data.success === "true") {
+                dispatch({
+                    type: "SET_ROLES",
+                    payload: data.permission
+                })
+            }
+        }
+        catch (err) {
+            console.log("Error in getRoles", err.response)
+        }
+    }
+}
+
+export const createGroup = (groupCredential) => {
+    return async (dispatch) => {
+        try {
+            console.log("groupcredentials",groupCredential)
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: "http://idea.cxdeployer.com/api/group",
+                data: groupCredential
+            })
+            if (data.success === "true") {
+                dispatch({
+                    type: "SET_GROUP",
+                    payload: data
+                })
+            }
+            console.log("da",data)
+        }
+        catch (err) {
+            console.log("Error in createGroup", err.response)
+        }
+    }
+}
+
+export const getGroups = () => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: "http://idea.cxdeployer.com/api/group",
+            })
+            if (data.success === "true") {
+                dispatch({
+                    type: "SET_GROUP",
+                    payload: data
+                })
+            }
+            console.log("da", data)
+        }
+        catch (err) {
+            console.log("Error in getGroups", err.response)
+        }
+    }
+}
+
+export const getGroupById = (groupId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: "http://idea.cxdeployer.com/api/permission/role",
+                data: groupId
+            })
+            console.log("getGroupById", data)
+            dispatch({
+                type: "SET_GROUP",
+                payload: data.user
+            })
+        }
+        catch (err) {
+            console.log("Error in getGroupById", err.response)
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//RESET PASSWORD
+
 export const resetPassword = (userCredentials) => {
     return async (dispatch) => {
         try {
@@ -222,12 +355,7 @@ export const resetPassword = (userCredentials) => {
 }
 
 
-
-
-
-
-
-
+//USER LOGOUT
 
 export const userLogout = (history) => {
     return (dispatch) => {

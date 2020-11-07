@@ -48,6 +48,7 @@ const AddEmployee = () => {
                                     <option value="Front End">Front End</option>
                                     <option value="Back End">Back End</option>
                                     <option value="Full Stack">Full Stack</option>
+                                    <option value="moderator">Moderator</option>
                                 </select>
                             </div>
                                 <div className="form-group">

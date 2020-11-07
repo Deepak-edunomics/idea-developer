@@ -3,15 +3,15 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { Modal, Button, Form, FormGroup } from 'react-bootstrap'
 
-import SideNav from '../../components/SideNav'
-import Employee from '../../components/Employee'
-import { getEmployees } from '../../redux/actions/userAction'
+import SideNav from '../components/SideNav'
+import Employee from '../components/Employee'
+import { getEmployees } from '../redux/actions/userAction'
 
 
 
 
 
-const AdminDashboard = () => {
+const Employees = () => {
     const userData = useSelector(store => store.userRoot)
     const dispatch = useDispatch()
     const [show, setShow] = useState(false);
@@ -73,4 +73,4 @@ const AdminDashboard = () => {
     )
 }
 
-export default AdminDashboard
+export default Employees
