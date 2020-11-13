@@ -1,17 +1,31 @@
 const initialState = {
+    showLoginModal: false,
+    showSignupModal: false,
     user: null,
     isVerified: false,
     loader: false,
     workspaces: null, 
     employees: [],
     roles: [],
-    groups: []
+    groups: [],
+    workflows: [],
+    stages: []
 }
 
 
 
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
+        case "SET_SIGNUP_MODAL":
+            return {
+                ...state,
+                showSignupModal: action.payload
+            }
+        case "SET_LOGIN_MODAL":
+            return {
+                ...state,
+                showLoginModal: action.payload
+            }
         case "SET_LOADER":
             return {
                 ...state,
@@ -21,6 +35,7 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 user: action.payload,
+                isVerified : action.payload.isVerified,
                 loader: false
             }
         case "VERIFY_USER":
@@ -109,8 +124,31 @@ const userReducer = (state = initialState, action) => {
         case "SET_GROUP":
             return {
                 ...state,
-                groups: [action.payload, ...state.groups],
+                groups: [...state.groups, action.payload],
                 loader: false
+            }
+        case "SET_GROUPS":
+            return {
+                ...state,
+                groups: action.payload,
+                loader: false
+            }
+        case "SET_WORKFLOW":
+            return {
+                ...state,
+                workflows: [...state.workflows, action.payload],
+                loader: false
+            }
+        case "SET_WORKFLOWS":
+            return {
+                ...state,
+                workflows: action.payload,
+                loader: false
+            }
+        case "ADD_STAGE":
+            return {
+                ...state,
+                stages: [...state.stages, action.payload]
             }
         default:
           return state

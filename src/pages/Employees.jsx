@@ -6,6 +6,7 @@ import { Modal, Button, Form, FormGroup } from 'react-bootstrap'
 import SideNav from '../components/SideNav'
 import Employee from '../components/Employee'
 import { getEmployees } from '../redux/actions/userAction'
+import AddEmployee from '../components/AddEmployee'
 
 
 
@@ -22,9 +23,10 @@ const Employees = () => {
         }
     }, [])
 
+
     return (
         <>
-            
+            <AddEmployee show ={show} setShow={setShow} />
             <div className="container-fluid mt-5">
                 <div className="row">
                     <div className="col-md-2">
@@ -39,7 +41,7 @@ const Employees = () => {
                             <div className="col-7">
                             </div>
                             <div className="col-2 m-auto">
-                                <button className="btn btn-primary" data-toggle="modal" data-target="#addEmployeeModal">Add Employee</button>
+                                <button className="btn btn-primary" onClick={()=>setShow(true)}>Add Employee</button>
                             </div>
                         </div>
 

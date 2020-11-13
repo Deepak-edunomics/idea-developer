@@ -7,6 +7,8 @@ import {getEmployees, createGroup, getGroups} from '../redux/actions/userAction'
 
 import SideNav from '../components/SideNav'
 import Group from '../components/Group'
+import Loader from '../components/Loader'
+import GroupCollection from '../components/GroupCollection'
 
 
 const Groups = () => {
@@ -35,7 +37,7 @@ const Groups = () => {
             dispatch(getEmployees())
         }
         if (userData.groups.length === 0) {
-           // dispatch(getGroups())
+           dispatch(getGroups())
         }
     }, [])
 
@@ -43,7 +45,10 @@ const Groups = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        dispatch(createGroup({user:checkedValue, challengetype: "idea", name: groupName}))
+        dispatch(createGroup({ users: checkedValue, challengetype: "idea", groupName }))
+        setTimeout(() => {
+            setShow(false)
+        },400)
     }
 
     
@@ -84,8 +89,7 @@ const Groups = () => {
                                 </tbody>
                             </Table>
                         </FormGroup>
-
-                        <Button type="submit" variant="primary">Add Group</Button>
+                        {userData.loader ? <Loader /> : <Button type="submit" variant="primary">Add Group</Button> }
                     </Form>
 
                 </Modal.Body>
@@ -104,6 +108,13 @@ const Groups = () => {
                     </div>
                     <div className="col-md-8">
                         <h1 className="display-4">Groups</h1>
+                        {userData.groups.length !== 0 ? <>
+                            {userData.groups.map(group =>
+                                <GroupCollection group={group} key={group._id} />
+                                )}
+                        </> : <h2>No Group to show kindly add</h2>}
+
+                        
 
 
                     </div>

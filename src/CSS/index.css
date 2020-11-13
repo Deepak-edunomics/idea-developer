@@ -1,0 +1,172 @@
+/* GlobalButton */
+
+.global-btn {
+  color: #fff !important;
+  border-radius: 22px !important;
+  right: 16px;
+  bottom: 16px;
+  outline: none !important;
+  position: fixed !important;
+  background: #f27329 !important;
+  cursor: pointer;
+}
+
+.btn {
+  color: #fff !important;
+  border-radius: 18px !important;
+  outline: none !important;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background-color: #162950 !important;
+}
+
+.btn-post {
+  background-color: #f27329 !important;
+  padding-left: 26px !important;
+  padding-right: 26px !important;
+}
+/* utility */
+.margin-bottom-zero{
+   margin-bottom: 0;
+}
+
+/* icons color */
+.views{
+  color:  #808080  ;
+}
+.like{
+  color: blue;
+}
+.comment{
+  color: #ffbb33;
+}
+.ideas{
+  color: #9999ff;
+}
+
+.rating{
+  color: #ffcc00;
+}
+/* Modal  */
+.modal, .modal-backdrop{
+  z-index: 2000 !important;
+}
+.downvote{
+  color: red;
+}
+.modal-header {
+  color: #fff !important;
+  background-color: #162950 !important;
+  border: none !important;
+  box-shadow: 0px 5px #fff !important;
+  text-align: center !important;
+  align-items: center !important;
+}
+
+.table-margin {
+  margin: 10px 22px;
+}
+/*  React Bootstrap CSS overriding */
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 750px !important;
+  }
+}
+
+.table-header {
+  background-color: #454850 !important;
+  color: #fff !important;
+}
+
+/* Avtar styling */
+.avtar {
+  margin-bottom: 8px;
+  padding: 0 15px;
+}
+.avtar-name {
+  margin: auto 0;
+  padding-left: 10px;
+}
+
+/* idea bar */
+.idea-bar-nav {
+  background-color: #fff !important;
+}
+.btn-ideas-bar {
+  color: #fff !important;
+  outline: none !important;
+  margin: 0 3px !important;
+  font-weight: bold !important;
+  border-radius: 15px 15px 0px 0px !important;
+  background-color: #213e78 !important;
+  padding: 4px 10px !important;
+}
+.btn-ideas-bar:hover {
+  background-color: #f27329 !important;
+}
+.PrivateTabIndicator-colorPrimary-5 {
+  background-color: #d9d9d9 !important;
+}
+
+/* idea card */
+.cards-footer{
+    margin-right: 10px;
+    padding: 0 5px;
+}
+
+/* challenge details margin */
+.challenge-details
+{
+  margin : 10px 22px !important;
+}
+
+.description-footer{
+  margin-right: 10px;
+  padding: 0 5px;
+}
+
+.top-contri-head{
+  background-image: url("../Media/Banner.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 50px;
+  min-width: 210px;
+}
+
+/* comment section challenge */
+.challenge-comment-section{
+  margin: 10px 0px 10px 20px !important;
+}
+.challenge-comments{
+  padding-left: 30px !important;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+/*  */
+.pipeline{
+  margin: 10px 25px 10px;
+  
+}
+.pipeline-streams{
+  background-color: #e6e6e6;
+  padding-top: 15px !important;
+  
+}
+.pipeline-cards{
+  background-color: #fff ;
+   margin: 20px 10px 20px; 
+  padding:25px 5px; 
+  border-radius:14px;
+  cursor: pointer;
+  /* box-shadow: 0 10px 20px 0 #d9d9d9,0 6px 20px 0 #d9d9d9 ; */
+  box-shadow: 12px 2px 15px -4px #b1b4b1, -12px 2px 8px -4px #b1b4b1;
+}
+.pipeline-cards:hover{
+  box-shadow: none;
+}

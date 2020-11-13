@@ -1,56 +1,68 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import Loader from './Loader'
-import {userLogin} from '../redux/actions/userAction'
+import { userLogin, showLoginModalHelper } from '../redux/actions/userAction'
+import { Modal, Button } from 'react-bootstrap'
+import classnames from 'classnames'
 
-const LoginForm = () => {
+const LoginForm = (props) => {
     const userData = useSelector(store => store.userRoot)
+    const errorData = useSelector(store=>store.errorRoot)
     const dispatch = useDispatch()
     const history = useHistory()
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [loginErrors, setLoginErrors] = useState('')
+
 
     const formHandler = (e) => {
         e.preventDefault()
         dispatch(userLogin({ email, password },history))
     }
+
+    useEffect(() => {
+        if (errorData.loginErrors) {
+            setLoginErrors(errorData.loginErrors)
+        }
+    }, [errorData])
     return (
-        <div className="modal fade" id="loginModal" tabIndex="-1" aria-labelledby="loginModal" aria-hidden="true">
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title" id="loginModal">LOGIN</h5>
-                        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div className="modal-body">
-                        <form onSubmit={formHandler}>
-                            <div className="form-group">
-                                <label htmlFor="emailLoginId">Email</label>
-                                <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className="form-control" id="emailLoginId" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="passwordLoginId">Password</label>
-                                <input onChange={(e) => setPassword(e.target.value)} valiue={password} type="password" className="form-control" id="passwordLoginId" />
-                            </div>
-                            {/* {user.success && <div className="alert alert-success" role="alert">
-                                LoggedIn Successfully
-                            </div>} */}
-                            {userData.loader ? <Loader /> : <button type="submit" className="btn btn-primary">Submit</button>}
-                            <Link to="/forgotPassword" > Forgot Password ?</Link>
-                        </form>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <>
+         <Modal show={userData.showLoginModal} onHide={()=>dispatch(showLoginModalHelper(false))}>
+                <Modal.Header closeButton>
+                    <Modal.Title>LOGIN</Modal.Title>
+                </Modal.Header>
+                <Modal.Body> <form onSubmit={formHandler}>
+                    <div className="form-group">
+                        <label htmlFor="emailLoginId">Email</label>
+                        <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className={classnames("form-control",
+                            {
+                                'is-invalid': loginErrors.email
 
+                            })} id="emailLoginId" />
+                        {loginErrors.email && (<div className="invalid-feedback">{loginErrors.email}</div>)}
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="passwordLoginId">Password</label>
+                        <input onChange={(e) => setPassword(e.target.value)} valiue={password} type="password" className={classnames("form-control",
+                            {
+                                'is-invalid': loginErrors.password
 
+                            })} id="passwordLoginId" />
+                        {loginErrors.password && (<div className="invalid-feedback">{loginErrors.password}</div>)}
+                    </div>
+                    {userData.loader ? <Loader /> : <button type="submit" className="btn btn-primary">Submit</button>}
+                    <Link to="/forgotPassword" > Forgot Password ?</Link>
+                </form></Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => dispatch(showLoginModalHelper(false))}>
+                    Close
+          </Button>
+                </Modal.Footer>
+            </Modal>
+
+</>
     )
 }
 

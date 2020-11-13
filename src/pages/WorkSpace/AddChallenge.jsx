@@ -1,9 +1,10 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { Link } from 'react-router-dom'
 
 import SideNav from '../../components/SideNav'
 
 const AddChallenge = () => {
+    const [challengeType, setChallengeType] = useState("")
     return (
         <div className="container-fluid mt-5">
             <form>
@@ -15,13 +16,13 @@ const AddChallenge = () => {
                 <div className="col-md-8">
                    
                         <div className="row">
-                            <div className="col-4">
+                            <div className="col-md-3 m-auto">
                                 <h3>Challenge Type</h3>
 
                             </div>
-                            <div className="col-8">
+                            <div className="col-md-6">
                                 <div className="form-group">
-                              {/* <input onChange={(e) => setChallengeType(e.target.value)} value={workspaceTitle} type="text" className="form-control" id="addWorkspaceId" /> */}
+                              <input onChange={(e) => setChallengeType(e.target.value)} value={challengeType} type="text" className="form-control" id="addWorkspaceId" />
                                 </div>
                             </div>
                             
@@ -72,10 +73,6 @@ const AddChallenge = () => {
                                     </div>
                                 </div>
                             </div>
-                           
-                           
-                            
-
                        </div>
                    
                     <div className="text-right mt-5">

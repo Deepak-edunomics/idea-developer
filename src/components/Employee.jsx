@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-
 import { Modal, Button, Form, FormGroup } from 'react-bootstrap'
-
 import { editEmployee, deleteEmployee} from '../redux/actions/userAction'
+
+
 
 const Employee = (props) => {
     const dispatch = useDispatch()
@@ -12,15 +12,17 @@ const Employee = (props) => {
 
     const [firstName, setFirstName] = useState(props.employee.firstName)
     const [lastName, setLastName] = useState(props.employee.lastName)
-    const [email, setEmail] = useState(props.employee.email)
     const [role, setRole] = useState(props.employee.role)
+
 
 
 
 
     const formHandler = (e) => {
         e.preventDefault()
-        dispatch(editEmployee({ firstName, lastName, email, role }, props.employee._id))
+       
+
+        dispatch(editEmployee({ firstName, lastName, role }, props.employee._id))
         setShowEditModal(false)
     }
 
@@ -46,10 +48,6 @@ const Employee = (props) => {
                         <FormGroup>
                             <Form.Label>Last Name</Form.Label>
                             <Form.Control type="text" onChange={(e) => setLastName(e.target.value)} value={lastName} />
-                        </FormGroup>
-                        <FormGroup>
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control type="text" onChange={(e) => setEmail(e.target.value)} value={email} />
                         </FormGroup>
                         <FormGroup>
                             <Form.Label>Role</Form.Label>

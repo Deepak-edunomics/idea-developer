@@ -1,6 +1,5 @@
 import axios from 'axios'
 import setAuthToken from '../helper/setAuthToken'
-import jwt_decode from 'jwt-decode'
 
 
 export const userLoginHelper = (data) => {
@@ -10,6 +9,26 @@ export const userLoginHelper = (data) => {
     }
 }
 
+export const showSignupModalHelper = (data) => {
+    return {
+        type: "SET_SIGNUP_MODAL",
+        payload: data
+    }
+}
+
+export const showLoginModalHelper = (data) => {
+    return {
+        type: "SET_LOGIN_MODAL",
+        payload: data
+    }
+}
+
+export const addStageHelper = (data) => {
+    return {
+        type: "ADD_STAGE",
+        payload: data
+    }
+}
 
 const loaderHelper = (data) => {
     return {
@@ -25,22 +44,34 @@ const verifyUserHelper = (data) => {
     }
 }
 
+// const urlHelper = "http://idea.cxdeployer.com/api"
+
+const urlHelper = 'http://localhost:3001/api'
+
 export const userRegister = (userRegisterCredentials) => {
     return async (dispatch) => {
         try {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: "Post",
-                url: "http://idea.cxdeployer.com/api/register",
+                url: `${urlHelper}/user/register`,
                 data: userRegisterCredentials
             })
-            const { token} = data
-            localStorage.setItem('userJwtToken', token);
-            setAuthToken(token)
-            dispatch(userLoginHelper(jwt_decode(token)))
+            if (data.success) {
+                const { token, result } = data
+                localStorage.setItem('ideaDeveloperUserToken', token)
+                setAuthToken(token)
+                dispatch(userLoginHelper(result))
+            }
         }
         catch (err) {
-             console.log("Error in userRegister Action", err.response.data)
+            console.log("Error in userRegister Action", err.response.data)
+            dispatch(loaderHelper(false))
+            dispatch({
+                type: "SET_USER_REGISTER_ERRORS",
+                payload: err.response.data
+            })
+
         }
        
     }
@@ -53,27 +84,59 @@ export const userLogin = (userLoginCredentials,history) => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: "Post",
-                url: "http://idea.cxdeployer.com/api/user/login",
+                url: `${urlHelper}/user/login`,
                 data: userLoginCredentials
             })
-            const { token , user} = data
-            localStorage.setItem('userJwtToken', token);
-            setAuthToken(token);
-            dispatch(userLoginHelper(user))
-            if (user.isVerified) {
-                dispatch(verifyUserHelper(true))
+            if (data.success) {
+                const { token, result } = data
+                localStorage.setItem('ideaDeveloperUserToken', token)
+                setAuthToken(token)
+                dispatch(userLoginHelper(result))
                 history.push('/dashboard')
-            }
-            else {
-                alert("You havent verified your email yet.")
             }
         }
         catch (err) {
             console.log("Error in userLogin Action", err.response.data)
+            dispatch(loaderHelper(false))
+            dispatch({
+                type: "SET_USER_LOGIN_ERRORS",
+                payload: err.response.data
+            })
         }
 
     }
 }
+
+export const emailVerification = (otpCredentials, history) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/emailVerification`,
+                data: otpCredentials
+            })
+            if (data.success) {
+                const { token, result } = data
+                localStorage.setItem('ideaDeveloperUserToken', token)
+                setAuthToken(token)
+                dispatch(userLoginHelper(result))
+                dispatch(verifyUserHelper(true))
+                history.push('/dashboard')
+            }
+
+        }
+        catch (err) {
+            console.log("Error in emailVerification", err.response.data)
+            dispatch(loaderHelper(false))
+            dispatch({
+                type: "SET_EMAIL_VERIFICATION_ERRORS",
+                payload: err.response.data
+            })
+        }
+    }
+}
+
 
 export const addWorkspace = (workspacedata) => {
     return async (dispatch) => {
@@ -81,12 +144,12 @@ export const addWorkspace = (workspacedata) => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: "Post",
-                url: "http://idea.cxdeployer.com/api/workspace/register",
+                url: `${urlHelper}/workspace/register`,
                 data: workspacedata
             })
-            console.log("data",data)
         }
         catch (err) {
+            dispatch(loaderHelper(false))
             console.log("Error in addworkspace Action", err.response.data)
         }
 
@@ -96,27 +159,6 @@ export const addWorkspace = (workspacedata) => {
 
 
 
-export const submitOTP = (otpCredentials, history) => {
-    return async (dispatch) => {
-        try {
-            dispatch(loaderHelper(true))
-            const { data } = await axios({
-                method: 'Post',
-                url: "http://idea.cxdeployer.com/api/otp/verify",
-                data: otpCredentials
-            })
-            dispatch(verifyUserHelper(true))
-            history.push('/dashboard')
-        }
-        catch (err) {
-            dispatch({
-                type: "SET_FORGOT_PASSWORD_ERRORS",
-                payload: err.response.data
-            })
-            console.log("Error in submitOTP", err.response.data)
-        }
-    }
-}
 
 export const addEmployee = (employeeCredentials) => {
     return async (dispatch) => {
@@ -124,17 +166,20 @@ export const addEmployee = (employeeCredentials) => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Post',
-                url: "http://idea.cxdeployer.com/api/user/register",
+                url: `${urlHelper}/user/employee`,
                 data: employeeCredentials
             })
-            dispatch({
-                type: "SET_EMPLOYEE",
-                payload: data.user
-            })
-            console.log("addEmployee",data)
+            if (data.success) {
+                dispatch({
+                    type: "SET_EMPLOYEE",
+                    payload: data.result
+                })
+            }
+            console.log("addEmployee",data.result)
         }
         catch (err) {
-            console.log("Error in addEmployee", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in addEmployee", err.response.data)
         }
     }
 }
@@ -145,18 +190,19 @@ export const editEmployee = (employeeCredentials,_id) => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Put',
-                url: `http://idea.cxdeployer.com/api/user/edit/${_id}`,
+                url: `${urlHelper}/user/employee/${_id}`,
                 data: employeeCredentials
             })
-            if (data.success === "true") {
+            if (data.success) {
                 dispatch({
                     type: "UPDATE_EMPLOYEE",
-                    payload: data.user
+                    payload: data.result
                 })
             }
         }
         catch (err) {
-            console.log("Error in editEmployee", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in editEmployee", err.response.data)
         }
     }
 }
@@ -167,9 +213,9 @@ export const deleteEmployee = (_id) => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Delete',
-                url: `http://idea.cxdeployer.com/api/user/delete/${_id}`,
+                url: `${urlHelper}/user/employee/${_id}`,
             })
-            if (data.success === "true") {
+            if (data.success) {
                  dispatch({
                      type: "DELETE_EMPLOYEE",
                      payload: _id
@@ -177,7 +223,8 @@ export const deleteEmployee = (_id) => {
             }
         }
         catch (err) {
-            console.log("Error in deleteEmployee", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in deleteEmployee", err.response.data)
         }
     }
 }
@@ -188,15 +235,18 @@ export const getEmployees = () => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Get',
-                url: "http://idea.cxdeployer.com/api/user/all",
+                url: `${urlHelper}/user/employee`,
             })
-            dispatch({
-                type: "SET_EMPLOYEES",
-                payload: data.user
-            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_EMPLOYEES",
+                    payload: data.result
+                })
+            }
         }
         catch (err) {
-            console.log("Error in  getEmployees", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in  getEmployees", err.response.data)
         }
     }
 }
@@ -207,18 +257,19 @@ export const createRole = (roleCredential) => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Post',
-                url: "http://idea.cxdeployer.com/api/permission/role",
+                url: `${urlHelper}/user/permission`,
                 data: roleCredential
             })
-            if (data.success === "true") {
+            if (data.success) {
                 dispatch({
                     type: "SET_ROLE",
-                    payload: data.permission
+                    payload: data.result
                 })
             }
         }
         catch (err) {
-            console.log("Error in createRole", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in createRole", err.response.data)
         }
     }
 }
@@ -229,18 +280,19 @@ export const getRoles = () => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Get',
-                url: "http://idea.cxdeployer.com/api/permission/role",
+                url: `${urlHelper}/user/permission`,
             })
             dispatch(loaderHelper(false))
-            if (data.success === "true") {
+            if (data.success) {
                 dispatch({
                     type: "SET_ROLES",
-                    payload: data.permission
+                    payload: data.result
                 })
             }
         }
         catch (err) {
-            console.log("Error in getRoles", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in getRoles", err.response.data)
         }
     }
 }
@@ -248,23 +300,22 @@ export const getRoles = () => {
 export const createGroup = (groupCredential) => {
     return async (dispatch) => {
         try {
-            console.log("groupcredentials",groupCredential)
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Post',
-                url: "http://idea.cxdeployer.com/api/group",
+                url: `${urlHelper}/user/group`,
                 data: groupCredential
             })
-            if (data.success === "true") {
+            if (data.success) {
                 dispatch({
                     type: "SET_GROUP",
-                    payload: data
+                    payload: data.result
                 })
             }
-            console.log("da",data)
         }
         catch (err) {
-            console.log("Error in createGroup", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in createGroup", err.response.data)
         }
     }
 }
@@ -275,18 +326,18 @@ export const getGroups = () => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Get',
-                url: "http://idea.cxdeployer.com/api/group",
+                url: `${urlHelper}/user/group`,
             })
-            if (data.success === "true") {
+            if (data.success) {
                 dispatch({
-                    type: "SET_GROUP",
-                    payload: data
+                    type: "SET_GROUPS",
+                    payload: data.result
                 })
             }
-            console.log("da", data)
         }
         catch (err) {
-            console.log("Error in getGroups", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in getGroups", err.response.data)
         }
     }
 }
@@ -297,7 +348,7 @@ export const getGroupById = (groupId) => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Post',
-                url: "http://idea.cxdeployer.com/api/permission/role",
+                url: `${urlHelper}/permission/role`,
                 data: groupId
             })
             console.log("getGroupById", data)
@@ -307,7 +358,8 @@ export const getGroupById = (groupId) => {
             })
         }
         catch (err) {
-            console.log("Error in getGroupById", err.response)
+            dispatch(loaderHelper(false))
+            console.log("Error in getGroupById", err.response.data)
         }
     }
 }
@@ -315,22 +367,12 @@ export const getGroupById = (groupId) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const createWorkflow = (data) => {
+    return {
+        type: "SET_WORKFLOW",
+        payload: data
+    }
+}
 
 
 
@@ -342,13 +384,13 @@ export const resetPassword = (userCredentials) => {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Put',
-                url: "http://idea.cxdeployer.com/api/password/change",
+                url: `${urlHelper}/password/change`,
                 data: userCredentials
             })
             dispatch(loaderHelper(false))
         }
         catch (err) {
-
+            dispatch(loaderHelper(false))
             console.log("Error in resetPassword", err.response)
         }
     }
@@ -359,11 +401,21 @@ export const resetPassword = (userCredentials) => {
 
 export const userLogout = (history) => {
     return (dispatch) => {
-        localStorage.removeItem('userJwtToken');
+        localStorage.removeItem('ideaDeveloperUserToken');
         setAuthToken(false);
         dispatch({
             type: "USER_LOGOUT"
         });
         history.push('/')
+    }
+}
+
+export const tokenExpireHelper = () => {
+    return (dispatch) => {
+        localStorage.removeItem('ideaDeveloperUserToken');
+        setAuthToken(false);
+        dispatch({
+            type: "USER_LOGOUT"
+        });
     }
 }
