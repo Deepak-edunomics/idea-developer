@@ -1,17 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { Modal, Form, FormGroup, Row, Col } from "react-bootstrap";
-import { useState } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
+import { addChallenge } from '../../redux/actions/userAction'
 // local file imports
 import "../../CSS/index.css";
+
 
 const categories = ["Category1", "Category 2"];
 const groups = ["user 1", "user 2", "user 3"];
 const taglist = ["tag 1", "tag 2", "tag 3"];
 
 function PostChallenge() {
+    const userData = useSelector(store => store.userRoot)
+    const dispatch = useDispatch()
     const [showModal, setShowModal] = useState(false);
     const [title, setTitle] = useState();
     const [description, setDescription] = useState();
@@ -23,13 +27,26 @@ function PostChallenge() {
     const handleCloseModal = () => setShowModal(false);
     const handleShowModal = () => setShowModal(true);
 
+    const formHandler = (e) => {
+        e.preventDefault()
+        dispatch(addChallenge({
+            title, description, startDate, endDate,
+            categories: categoryOptions, groups: groupOptions,
+            tags
+        }))
+        setTimeout(() =>
+            handleCloseModal()
+            , 300)
+    }
+
+
     return (
         <div>
             <Button
                 startIcon={<AddIcon />}
                 variant="contained"
                 size="large"
-                className="global-btn"
+                // className="global-btn"
                 onClick={handleShowModal}
             >
                 Create Challenge
@@ -41,7 +58,7 @@ function PostChallenge() {
           </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={formHandler}>
                         <FormGroup>
                             <Form.Label>Challenge Title</Form.Label>
                             <Form.Control
@@ -173,7 +190,7 @@ function PostChallenge() {
                                     </Col>
                                     <Col md="6">
                                         <FormGroup>
-                                            <Button variant="contained" className="btn btn-post">
+                                            <Button type="submit" variant="contained" className="btn btn-post">
                                                 Post
                       </Button>
                                         </FormGroup>

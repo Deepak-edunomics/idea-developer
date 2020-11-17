@@ -4,6 +4,8 @@ import AddIcon from "@material-ui/icons/Add";
 import { Modal, Form, FormGroup, Row, Col} from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux'
+import {addIdea} from '../../redux/actions/userAction'
 import "../../CSS/index.css";
 
 
@@ -14,6 +16,7 @@ const benefitCategory = ["finance", "developement", "marketing"];
 
 // main component
 function PostIdea() {
+    const dispatch = useDispatch()
     const [showModal, setShowModal] = useState(false);
     const [ideaTitle, setIdeaTitle] = useState();
     const [ideaDescription, setIdeaDescription] = useState();
@@ -22,6 +25,22 @@ function PostIdea() {
     const handleCloseModal = () => setShowModal(false);
     const handleShowModal = () => {
         setShowModal(true);
+    }
+
+    const formHandler = (e) => {
+        e.preventDefault()
+        dispatch(addIdea({
+            title:ideaTitle,
+            description: ideaDescription,
+            challengeLinks: challenges,
+            benefitSectors: benefitOptions,
+        }))
+        setTimeout(() => {
+           handleCloseModal()
+        },500)
+
+        
+        
     }
         
     return (
@@ -41,7 +60,7 @@ function PostIdea() {
                     <Modal.Title style={{ textAlign: "center" }}>Post Idea</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={formHandler}>
                         <FormGroup>
                             <Form.Label>Idea Title</Form.Label>
                             <Form.Control
@@ -124,7 +143,7 @@ function PostIdea() {
                                     </Col>
                                     <Col md="6">
                                         <FormGroup>
-                                            <Button variant="contained" className="btn btn-post">
+                                            <Button type="submit" variant="contained" className="btn btn-post">
                                                 Post
                       </Button>
                                         </FormGroup>

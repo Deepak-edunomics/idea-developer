@@ -51,8 +51,6 @@ if (window.localStorage.ideaDeveloperUserToken) {
 
 
 function App() {
- 
-
   const userData = useSelector(store => store.userRoot)
   return (
     <div className="App">

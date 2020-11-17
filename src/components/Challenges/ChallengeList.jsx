@@ -19,6 +19,8 @@ import {Link} from 'react-router-dom'
 
 // imported local files
 import challenges from "../doumyData";
+
+
 import {
     StyledTableCell,
     StyledTableRow,
@@ -26,6 +28,7 @@ import {
     useStyles1,
 } from "../Utilities/TableUtil";
 
+console.log(":swdw",challenges)
 //  table pagination functionality
 function TablePaginationActions(props) {
     const classes = useStyles1();

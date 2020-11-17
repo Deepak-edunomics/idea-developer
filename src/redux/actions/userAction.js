@@ -46,8 +46,11 @@ const verifyUserHelper = (data) => {
 
 // const urlHelper = "http://idea.cxdeployer.com/api"
 
-const urlHelper = 'http://localhost:3001/api'
+// const urlHelper = 'http://localhost:3001/api'
 
+const urlHelper = "https://idea-deployer.herokuapp.com/api"
+
+// USER
 export const userRegister = (userRegisterCredentials) => {
     return async (dispatch) => {
         try {
@@ -138,6 +141,9 @@ export const emailVerification = (otpCredentials, history) => {
 }
 
 
+
+// WORKSPACE
+
 export const addWorkspace = (workspacedata) => {
     return async (dispatch) => {
         try {
@@ -158,8 +164,7 @@ export const addWorkspace = (workspacedata) => {
 
 
 
-
-
+// EMPLOYEE
 export const addEmployee = (employeeCredentials) => {
     return async (dispatch) => {
         try {
@@ -251,6 +256,8 @@ export const getEmployees = () => {
     }
 }
 
+// ROLE
+
 export const createRole = (roleCredential) => {
     return async (dispatch) => {
         try {
@@ -297,6 +304,8 @@ export const getRoles = () => {
     }
 }
 
+
+// GROUP
 export const createGroup = (groupCredential) => {
     return async (dispatch) => {
         try {
@@ -365,6 +374,234 @@ export const getGroupById = (groupId) => {
 }
 
 
+// IDEA ACTIONS
+export const getIdeas = () => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: `${urlHelper}/user/idea`
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_IDEAS",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getIdeas", err.response.data)
+        }
+    }
+}
+
+export const getIdeaById = (ideaId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: `${urlHelper}/user/idea/${ideaId}`
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_IDEA",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getIdeaById", err.response.data)
+        }
+    }
+}
+
+
+export const addIdea = (ideaCredential) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/idea`,
+                data: ideaCredential
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_IDEA",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in addIdea", err.response.data)
+        }
+    }
+}
+
+export const updateIdea = (ideaCredential, ideaId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Put',
+                url: `${urlHelper}/user/idea/${ideaId}`,
+                data: ideaCredential
+            })
+            if (data.success) {
+                dispatch({
+                    type: "UPDATE_IDEA",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in updateIdea", err.response.data)
+        }
+    }
+}
+
+export const deleteIdea = (ideaId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Delete',
+                url: `${urlHelper}/user/idea/${ideaId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "DELETE_IDEA",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in deleteIdea", err.response.data)
+        }
+    }
+}
+
+
+// CHALLENGE ACTIONS
+export const getChallenges = () => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: `${urlHelper}/user/challenge`
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_CHALLENGES",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getChallenges", err.response.data)
+        }
+    }
+}
+
+export const getChallengeById = (challengeId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: `${urlHelper}/user/challenge/${challengeId}`
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_CHALLENGE",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getChallengeById", err.response.data)
+        }
+    }
+}
+
+
+export const addChallenge = (challengeCredential) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/challenge`,
+                data: challengeCredential
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_CHALLENGE",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in addChallenge", err.response.data)
+        }
+    }
+}
+
+export const updateChallenge = (challengeCredential, challengeId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Put',
+                url: `${urlHelper}/user/challenge/${challengeId}`,
+                data: challengeCredential
+            })
+            if (data.success) {
+                dispatch({
+                    type: "UPDATE_CHALLENGE",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in updateChallenge", err.response.data)
+        }
+    }
+}
+
+export const deleteChallenge = (challengeId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Delete',
+                url: `${urlHelper}/user/challenge/${challengeId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "DELETE_CHALLENGE",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in deleteChallenge", err.response.data)
+        }
+    }
+}
 
 
 export const createWorkflow = (data) => {
@@ -377,7 +614,6 @@ export const createWorkflow = (data) => {
 
 
 //RESET PASSWORD
-
 export const resetPassword = (userCredentials) => {
     return async (dispatch) => {
         try {
@@ -398,7 +634,6 @@ export const resetPassword = (userCredentials) => {
 
 
 //USER LOGOUT
-
 export const userLogout = (history) => {
     return (dispatch) => {
         localStorage.removeItem('ideaDeveloperUserToken');
@@ -409,6 +644,7 @@ export const userLogout = (history) => {
         history.push('/')
     }
 }
+
 
 export const tokenExpireHelper = () => {
     return (dispatch) => {

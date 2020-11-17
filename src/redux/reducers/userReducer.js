@@ -9,7 +9,9 @@ const initialState = {
     roles: [],
     groups: [],
     workflows: [],
-    stages: []
+    stages: [],
+    ideas: [],
+    challenges: []
 }
 
 
@@ -149,6 +151,58 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 stages: [...state.stages, action.payload]
+            }
+        case "SET_IDEA":
+            return {
+                ...state,
+                ideas: [...state.ideas, action.payload],
+                loader: false
+            }
+        case "SET_IDEAS":
+            return {
+                ...state,
+                ideas: action.payload,
+                loader: false
+            }
+        case "UPDATE_IDEA":
+            return {
+                ...state,
+                ideas: state.ideas.map(idea => idea._id === action.payload._id ? action.payload : idea),
+                loader: false
+            }
+        case "DELETE_IDEA":
+            return {
+                ...state,
+                ideas: state.ideas.filter(obj => {
+                    return obj._id !== action.payload
+                }),
+                loader: false
+            }
+        case "SET_CHALLENGE":
+            return {
+                ...state,
+                challenges: [...state.challenges, action.payload],
+                loader: false
+            }
+        case "SET_CHALLENGES":
+            return {
+                ...state,
+                challenges: action.payload,
+                loader: false
+            }
+        case "UPDATE_CHALLENGE":
+            return {
+                ...state,
+                challenges: state.challenges.map(challenge => challenge._id === action.payload._id ? action.payload : challenge),
+                loader: false
+            }
+        case "DELETE_CHALLENGE":
+            return {
+                ...state,
+                challenges: state.challenges.filter(obj => {
+                    return obj._id !== action.payload
+                }),
+                loader: false
             }
         default:
           return state
