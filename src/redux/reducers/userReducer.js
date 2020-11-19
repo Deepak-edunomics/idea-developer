@@ -4,14 +4,15 @@ const initialState = {
     user: null,
     isVerified: false,
     loader: false,
-    workspaces: null, 
+    workspaces: [], 
     employees: [],
     roles: [],
     groups: [],
     workflows: [],
     stages: [],
     ideas: [],
-    challenges: []
+    challenges: [],
+    currentWorkspace: null
 }
 
 
@@ -60,6 +61,7 @@ const userReducer = (state = initialState, action) => {
                 loader: false
             }
         case "SET_WORKSPACES":
+            console.log("as",action.payload)
             return {
                 ...state,
                 workspaces: action.payload,
@@ -78,6 +80,11 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 workspaces: state.workspaces.map(workspace => workspace._id === action.payload._id ? action.payload : workspace),
                 loader: false
+            }
+        case "SET_CURRENT_WORKSPACE":
+            return {
+                ...state,
+                currentWorkspace: action.payload
             }
         case "SET_EMPLOYEE":
             return {

@@ -1,34 +1,22 @@
-import React, { useEffect } from 'react'
-import {Link} from 'react-router-dom'
-import Addworkspace from '../components/AddWorkspace'
+import React, {useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import {getWorkspace, getGroups} from '../redux/actions/userAction'
 import WorkSpaceCard from '../components/WorkSpaceCard'
 import SideNav from '../components/SideNav'
-import axios from 'axios'
 
 const Dashboard = () => {
-    
-
-  
+    const userData = useSelector(store => store.userRoot)
+    const {workspaces, groups} = userData
+    const dispatch = useDispatch()
     
     useEffect(() => {
-        const two = async () => {
-            const { data } = await axios({
-                method: 'Put',
-                url: 'http://devapi.rockprosusa.com/api/customer/editCustomer?customer_id=1020',
-                data: { name: "Deepak Singh" }
-            })
-            console.log("data", data)
-        }
-        two()
-       
-        
+        dispatch(getWorkspace())
+        dispatch(getGroups())
     }, [])
-    
 
-    const list = [1,2,3,4,5]
     return (
         <>
-            <Addworkspace />
              <div className="container-fluid mt-5">
                 <div className="row">
                     <div className="col-md-2">
@@ -37,9 +25,9 @@ const Dashboard = () => {
                     <div className="col-md-8">
                         <h1 className="display-4">Workspaces</h1>
                         <div className="row">
-                                {list.map((obj, index) =>
-                                    <WorkSpaceCard key={index} />
-                                )}
+                                {workspaces.length !==0 ? workspaces.map(workspace =>
+                                    <WorkSpaceCard workspace={workspace} key={workspace._id} />
+                                ): <h1>No Workspace found</h1>}
                         </div>
                     </div>
                     <div className="col-md-2">

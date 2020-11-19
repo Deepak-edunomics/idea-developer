@@ -30,6 +30,13 @@ export const addStageHelper = (data) => {
     }
 }
 
+export const setCurrentWorkspace = (data) => {
+    return {
+        type: "SET_CURRENT_WORKSPACE",
+        payload: data
+    }
+}
+
 const loaderHelper = (data) => {
     return {
         type: "SET_LOADER",
@@ -144,25 +151,106 @@ export const emailVerification = (otpCredentials, history) => {
 
 // WORKSPACE
 
-export const addWorkspace = (workspacedata) => {
+export const addWorkspace = (workspacedata,history) => {
     return async (dispatch) => {
         try {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: "Post",
-                url: `${urlHelper}/workspace/register`,
+                url: `${urlHelper}/user/workspace`,
                 data: workspacedata
             })
+            if (data.success) {
+                dispatch({
+                    type: "SET_WORKSPACE",
+                    payload: data.result
+                })
+                dispatch(setCurrentWorkspace(data.result))
+                history.push('/addChallenge')
+            }
         }
         catch (err) {
             dispatch(loaderHelper(false))
             console.log("Error in addworkspace Action", err.response.data)
+        }
+    }
+}
+
+
+export const getWorkspace = () => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: "Get",
+                url: `${urlHelper}/user/workspace`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_WORKSPACES",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getWorkspace Action", err.response)
+        }
+    }
+}
+
+
+export const updateWorkspace = (workspaceData,workspaceId,history) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: "Put",
+                url: `${urlHelper}/user/workspace/${workspaceId}`,
+                data: workspaceData
+            })
+            console.log("updateWorkspace",data)
+            if (data.success) {
+                dispatch({
+                    type: "UPDATE_WORKSPACE",
+                    payload: data.result
+                })
+                history.push('/workflow')
+                
+            
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in updateWorkspace Action", err.response)
         }
 
     }
 }
 
 
+export const deleteWorkspace = (workspaceId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: "Delete",
+                url: `${urlHelper}/user/workspace/${workspaceId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "DELETE_WORKSPACE",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in deleteWorkspace Action", err.response)
+        }
+
+    }
+}
 
 // EMPLOYEE
 export const addEmployee = (employeeCredentials) => {

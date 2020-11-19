@@ -7,10 +7,9 @@ import RegisterForm from '../components/RegisterForm'
 const LandingPAge = () => {
     const history = useHistory()
     const userData = useSelector(store => store.userRoot)
+    const {isVerified} = userData
      
-    console.log("sds",userData)
-    if (userData.isVerified) {
-           console.log("dfe")
+    if (isVerified) {
             history.push('/dashboard')
     }
     

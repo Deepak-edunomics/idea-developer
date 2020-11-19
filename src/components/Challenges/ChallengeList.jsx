@@ -28,7 +28,6 @@ import {
     useStyles1,
 } from "../Utilities/TableUtil";
 
-console.log(":swdw",challenges)
 //  table pagination functionality
 function TablePaginationActions(props) {
     const classes = useStyles1();

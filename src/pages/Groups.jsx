@@ -13,13 +13,13 @@ import GroupCollection from '../components/GroupCollection'
 
 const Groups = () => {
     const userData = useSelector(store => store.userRoot)
+    const {employees, groups, loader} = userData
     const dispatch = useDispatch()
     const [show, setShow] = useState(false)
     const [groupName, setGroupName] = useState("")
     const [checkedValue, setCheckedValue] = useState([])
 
     const handleInputChange = (e) => {
-       
         const tempCheck = checkedValue
         let index
         if (e.target.checked) {
@@ -33,10 +33,10 @@ const Groups = () => {
     }
 
     useEffect(() => {
-        if (userData.employees.length === 0) {
+        if (employees.length === 0) {
             dispatch(getEmployees())
         }
-        if (userData.groups.length === 0) {
+        if (groups.length === 0) {
            dispatch(getGroups())
         }
     }, [])
@@ -46,6 +46,8 @@ const Groups = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         dispatch(createGroup({ users: checkedValue, challengetype: "idea", groupName }))
+        setGroupName("")
+        setCheckedValue([])
         setTimeout(() => {
             setShow(false)
         },400)
@@ -81,15 +83,13 @@ const Groups = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {userData.employees.length !== 0 ? userData.employees.map((emp, index) =>
-                                        
+                                    {employees.length !==0 ? employees.map((emp, index) =>
                                         <Group key={emp._id} index={index + 1} handleInputChange={handleInputChange} employee={emp} />
-
                                         ) : <h1>No Empoloyee Found</h1>}
                                 </tbody>
                             </Table>
                         </FormGroup>
-                        {userData.loader ? <Loader /> : <Button type="submit" variant="primary">Add Group</Button> }
+                        {loader ? <Loader /> : <Button type="submit" variant="primary">Add Group</Button> }
                     </Form>
 
                 </Modal.Body>
@@ -108,8 +108,8 @@ const Groups = () => {
                     </div>
                     <div className="col-md-8">
                         <h1 className="display-4">Groups</h1>
-                        {userData.groups.length !== 0 ? <>
-                            {userData.groups.map(group =>
+                        {groups.length !== 0 ? <>
+                            {groups.map(group =>
                                 <GroupCollection group={group} key={group._id} />
                                 )}
                         </> : <h2>No Group to show kindly add</h2>}

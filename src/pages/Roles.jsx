@@ -14,6 +14,7 @@ import Loader from '../components/Loader'
 
 const Roles = () => {
     const userData = useSelector(store => store.userRoot)
+    const {user, employees, roles, loader } = userData
     const dispatch = useDispatch()
     const [role, setRole] = useState("")
     const [show, setShow] = useState(false)
@@ -40,10 +41,10 @@ const Roles = () => {
 
 
     useEffect(() => {
-        if (userData.employees.length === 0) {
+        if (employees.length === 0) {
             dispatch(getEmployees())
         }
-        if (userData.roles.length === 0) {
+        if (roles.length === 0) {
             dispatch(getRoles())
         }
     }, [])
@@ -79,8 +80,8 @@ const Roles = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         dispatch(createRole({
-            email: userData.user.email,
-            organization: userData.user.organization,
+            email: user.email,
+            organization: user.organization,
             role,
             createWs, editWs, deleteWs, viewWs,
             createIdea, editIdea, deleteIdea, viewIdea,
@@ -198,7 +199,7 @@ const Roles = () => {
                                 </tbody>
                             </Table>
                         </FormGroup>
-                        {userData.loader ? <Loader /> : <Button type="submit" variant="primary">Add</Button> }
+                        {loader ? <Loader /> : <Button type="submit" variant="primary">Add</Button> }
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -218,8 +219,7 @@ const Roles = () => {
                     <div className="col-md-8">
                         <h1 className="display-4">Roles</h1>
                         <Row className="mt-5">
-                            {}
-                                {userData.roles.length !== 0 ? userData.roles.map(rol =>
+                                {roles.length !== 0 ? roles.map(rol =>
                                     <Role key={rol._id} role={rol}/>
                                 ): <h2>No roles found</h2>}
                          </Row>

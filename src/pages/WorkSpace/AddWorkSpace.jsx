@@ -1,43 +1,53 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
-import {getEmployees} from '../../redux/actions/userAction'
+import { getEmployees, addWorkspace } from '../../redux/actions/userAction'
+import { Typeahead } from 'react-bootstrap-typeahead'
 
 import SideNav from '../../components/SideNav'
-
-
+import Loader from '../../components/Loader'
 
 
 const AddWorkSpace = () => {
     const userData = useSelector(store => store.userRoot)
-
-
+    const {employees, loader} = userData
     const dispatch = useDispatch()
-
+    const history = useHistory()
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [moderator, setModerator] = useState("")
-    const [challengetype, setChallengeType] = useState("")
+    const [challengeType, setChallengeType] = useState("")
+    const [moderator, setModerator] = useState([])
     const [moderators, setModerators] = useState([])
 
     useEffect(() => {
-        if (userData.employees.length === 0) {
+        if (employees.length === 0) {
             dispatch(getEmployees())
         }
     },[])
 
     useEffect(() => {
-        setModerators(userData.employees.filter(emp => emp.role === "moderator"))
-        console.log(userData)
-    }, [userData.employees])
+        if (employees.length !== 0) {
+            const tempData = userData.employees.filter(emp => emp.role === "moderator")
+            let filteredEmployees = []
+            for (var i = 0; i < tempData.length; i++) {
+                let name = tempData[i].firstName + " " + tempData[i].lastName
+                filteredEmployees.push({ name, _id: tempData[i]._id })
+            }
+            setModerator(filteredEmployees)
+        }
+    }, [employees])
 
-    console.log("moderatos",moderators)
+  
     const workspaceFormHandler = (e) => {
         e.preventDefault()
-        // dispatch(addWorkspace({title: }))
-
+        let moderatorsId = []
+        for (var i = 0; i < moderators.length; i++){
+            moderatorsId.push(moderators[i]._id)
+        }
+        dispatch(addWorkspace({ title, description, challengeType, moderators: moderatorsId },history))
     }
+    
     return (
         <div className="container-fluid mt-5">
             <div className="row">
@@ -46,32 +56,34 @@ const AddWorkSpace = () => {
 
                 </div>
                 <div className="col-md-8">
-                    <h1>Test Workspace</h1>
-                    <form>
+                    <h1>Workspace</h1>
+                    <form onSubmit={workspaceFormHandler}>
                         <div className="form-group">
                             <label htmlFor="addWorkspaceId">Title</label>
-                            <input onChange={(e) => setTitle(e.target.value)} value={title} type="text" className="form-control" id="addWorkspaceId" />
+                            <input required onChange={(e) => setTitle(e.target.value)} value={title} type="text" className="form-control" id="addWorkspaceId" />
                         </div>
                         <div className="form-group">
                             <label htmlFor="addWorkspaceId">Description</label>
-                            <textarea onChange={(e) => setDescription(e.target.value)} value={description} type="text" className="form-control" id="addWorkspaceId" />
+                            <textarea required onChange={(e) => setDescription(e.target.value)} value={description} type="text" className="form-control" id="addWorkspaceId" />
                         </div>
                         <div className="form-group">
                             <label htmlFor="employeeRole">Moderator</label>
-                            <select onChange={(e) => setModerator(e.target.value)} value={moderator} className="form-control">
-                                <option>Select</option>
-                                {moderators.map(mod =>
-                                    <option key={mod._id} value={mod._id}>{mod.firstName + " " + mod.lastName}</option>
-
-                                )}
-                            </select>
+                            <Typeahead required onChange={setModerators}
+                                selected = {moderators}
+                                clearButton
+                                id="#employeeRole"
+                                labelKey="name"
+                                multiple
+                                options={moderator}
+                                placeholder="Choose a moderator..."
+                                                                   />
                         </div>
                         <div className="form-group">
                             <label htmlFor="addWorkspaceId">Challenge Type</label>
-                            <input onChange={(e) => setChallengeType(e.target.value)} value={challengetype} type="text" className="form-control" id="addWorkspaceId" />
+                            <input required onChange={(e) => setChallengeType(e.target.value)} value={challengeType} type="text" className="form-control" id="addWorkspaceId" />
                         </div>
                         <div className="text-right">
-                            <Link to="/addChallenge" type="submit" className="btn btn-primary">Next</Link>
+                            {loader ? <Loader /> : <button type="submit" className="btn btn-primary">Next</button>}
                         </div>
                     </form>
                 </div>

@@ -7,12 +7,6 @@ import SideNav from '../../components/SideNav'
 
 import {createWorkflow} from '../../redux/actions/userAction'
 
-// const workFlows = [{ workFlowName: "Dummy1", challengeStage: "1", ideaStage: "4" },
-// { workFlowName: "Dummy2", challengeStage: "5", ideaStage: "4" },
-// { workFlowName: "Dummy3", challengeStage: "6", ideaStage: "3" },
-// { workFlowName: "Dummy4", challengeStage: "2", ideaStage: "6" },
-// { workFlowName: "Dummy5", challengeStage: "3", ideaStage: "7" },
-// { workFlowName: "Dummy6", challengeStage: "7", ideaStage: "4" }]
 
 const WorkFlow = () => {
     const workflows = useSelector(store => store.userRoot.workflows)
@@ -28,9 +22,6 @@ const WorkFlow = () => {
         },800)
         
     }
-
-
-
     return (
         <>
             <Modal show={show} onHide={() => setShow(false)}>
@@ -60,8 +51,6 @@ const WorkFlow = () => {
                 <div className="row">
                     <div className="col-md-2">
                         <SideNav />
-
-
                     </div>
                     <div className="col-md-8">
                         <h3>Challenge Work Flow</h3>
