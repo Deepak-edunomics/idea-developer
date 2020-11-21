@@ -1,18 +1,20 @@
 import React, {useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {getWorkspace, getGroups} from '../redux/actions/userAction'
 import WorkSpaceCard from '../components/WorkSpaceCard'
 import SideNav from '../components/SideNav'
 
+
 const Dashboard = () => {
     const userData = useSelector(store => store.userRoot)
-    const {workspaces, groups} = userData
+    const history = useHistory()
+    const {workspaces, groups, user} = userData
     const dispatch = useDispatch()
     
     useEffect(() => {
-        dispatch(getWorkspace())
-        dispatch(getGroups())
+            dispatch(getWorkspace())
+            dispatch(getGroups())
     }, [])
 
     return (

@@ -1,4 +1,4 @@
-import { React, useState, Fragment } from 'react';
+import  React, { useState, Fragment } from 'react';
 import "../../CSS/index.css"
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import SendIcon from '@material-ui/icons/Send';

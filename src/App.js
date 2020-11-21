@@ -24,13 +24,12 @@ import AddChallenge from './pages/WorkSpace/AddChallenge'
 import WorkFlow from './pages/WorkSpace/WorkFlow'
 import Roles from './pages/Roles'
 import Groups from './pages/Groups'
-import LogoutModal from './components/LogoutModal'
-import ResetPassword from './components/ResetPassword'
 import EditWorkflow from './pages/EditWorkflow'
 import Employees from './pages/Employees'
 import ForgotPassword from './pages/ForgotPassword'
 import ChallengeDetails from './pages/ChallengeDetails'
 import ChallengePipeline from './pages/ChallengePipeline'
+
 
 
 
@@ -55,11 +54,10 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <LogoutModal />
-        <ResetPassword />
         <LandingNav />
         <Switch>
           <Route exact path='/' component={LandingPage} />
+          <Route exact path="/forgotPassword" component={ForgotPassword} />
           {userData.isVerified ? <>
             <Route exact path="/dashboard" component={Dashboard} />
             <Route exact path="/addWorkSpace" component={AddWorkSpace} />
@@ -72,13 +70,13 @@ function App() {
             <Route exact path="/executionBoards" component={ExecutionBoards} />
             <Route exact path="/reports" component={Reports} />
             <Route exact path="/createGroup" component={CreateGroup} />
-            <Route exact path="/forgotPassword" component={ForgotPassword} />
             <Route exact path="/employees" component={Employees} />
             <Route exact path="/roles" component={Roles} />
             <Route exact path="/groups" component={Groups} />
             <Route exact path="/challenge-details" component={ChallengeDetails} />
             <Route exact path="/challenge-pipeline" component={ChallengePipeline} />
-            <Route exact path="/editWorkflow" component={EditWorkflow} />
+            {/* STAGES */}
+            <Route exact path="/workflow/:workflowId" component={EditWorkflow} />
           </> :
             <Redirect to="/" />}
         </Switch>

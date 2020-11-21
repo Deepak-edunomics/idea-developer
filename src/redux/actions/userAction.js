@@ -9,19 +9,6 @@ export const userLoginHelper = (data) => {
     }
 }
 
-export const showSignupModalHelper = (data) => {
-    return {
-        type: "SET_SIGNUP_MODAL",
-        payload: data
-    }
-}
-
-export const showLoginModalHelper = (data) => {
-    return {
-        type: "SET_LOGIN_MODAL",
-        payload: data
-    }
-}
 
 export const addStageHelper = (data) => {
     return {
@@ -51,11 +38,13 @@ const verifyUserHelper = (data) => {
     }
 }
 
+
+
 // const urlHelper = "http://idea.cxdeployer.com/api"
 
-// const urlHelper = 'http://localhost:3001/api'
+const urlHelper = 'http://127.0.0.1:3001/api'
 
-const urlHelper = "https://idea-deployer.herokuapp.com/api"
+// const urlHelper = "https://idea-deployer.herokuapp.com/api"
 
 // USER
 export const userRegister = (userRegisterCredentials) => {
@@ -88,6 +77,13 @@ export const userRegister = (userRegisterCredentials) => {
 }
 
 
+export const setLoginFlagHelper = (data) => {
+    return {
+        type: "SET_LOGIN_FLAG",
+        payload: data
+    }
+}
+
 export const userLogin = (userLoginCredentials,history) => {
     return async (dispatch) => {
         try {
@@ -102,6 +98,10 @@ export const userLogin = (userLoginCredentials,history) => {
                 localStorage.setItem('ideaDeveloperUserToken', token)
                 setAuthToken(token)
                 dispatch(userLoginHelper(result))
+                dispatch(setLoginFlagHelper(true))
+                setTimeout(() => {
+                    dispatch(setLoginFlagHelper(false))
+                },2000)
                 history.push('/dashboard')
             }
         }
@@ -147,10 +147,132 @@ export const emailVerification = (otpCredentials, history) => {
     }
 }
 
+export const setupdatePasswordHelper = (data) => {
+    return {
+        type: "SET_UPDATE_PASSWORD_FLAG",
+        payload: data
+    }
+}
+
+
+//UPDATE PASSWORD
+export const updatePassword = (passwordData) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/updatePassword`,
+                data: passwordData
+            })
+            if (data.success) {
+                dispatch(setupdatePasswordHelper(true))
+                setTimeout(() => {
+                    dispatch(setupdatePasswordHelper(false))
+                },2000)
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in resetPassword", err.response.data)
+        }
+    }
+}
+
+export const setForgotPasswordHelper = (data) => {
+    return {
+        type: "SET_FORGOT_PASSWORD_FLAG",
+        payload: data
+    }
+}
+
+//FORGOT PASSWORD
+export const forgotPassword = (email) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/forgotPassword`,
+                data: email
+            })
+            if (data.success) {
+                dispatch(setForgotPasswordHelper(true))
+                setTimeout(() => {
+                    dispatch(setForgotPasswordHelper(false))
+                },2000)
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in forgotPasword", err.response.data)
+
+        }
+    }
+}
+
+//POST OTP FOR FORGOT PASSWORD
+export const postOTP = (otpCredentials,history) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/postOTP`,
+                data: otpCredentials
+            })
+            if (data.success) {
+                const { token, result } = data
+                localStorage.setItem('ideaDeveloperUserToken', token)
+                setAuthToken(token)
+                dispatch(userLoginHelper(result))
+                history.push('/dashboard')
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in postOTP", err.response.data)
+
+        }
+    }
+}
+
+export const userLogoutFlagHelper = (data) => {
+    return {
+        type: "SET_LOGOUT_FLAG",
+        payload: data
+    }
+}
+export const userLogout = (history) => {
+    return (dispatch) => {
+        localStorage.removeItem('ideaDeveloperUserToken');
+        setAuthToken(false);
+        dispatch({
+            type: "USER_LOGOUT"
+        });
+        dispatch(userLogoutFlagHelper(true))
+        setTimeout(() => {
+          dispatch(userLogoutFlagHelper(false))  
+        },2000)
+        history.push('/')
+    }
+}
+
+export const tokenExpireHelper = () => {
+    return (dispatch) => {
+        localStorage.removeItem('ideaDeveloperUserToken');
+        setAuthToken(false);
+        dispatch({
+            type: "USER_LOGOUT"
+        });
+    }
+}
+
+
+
 
 
 // WORKSPACE
-
 export const addWorkspace = (workspacedata,history) => {
     return async (dispatch) => {
         try {
@@ -228,7 +350,6 @@ export const updateWorkspace = (workspaceData,workspaceId,history) => {
     }
 }
 
-
 export const deleteWorkspace = (workspaceId) => {
     return async (dispatch) => {
         try {
@@ -251,6 +372,7 @@ export const deleteWorkspace = (workspaceId) => {
 
     }
 }
+
 
 // EMPLOYEE
 export const addEmployee = (employeeCredentials) => {
@@ -345,7 +467,6 @@ export const getEmployees = () => {
 }
 
 // ROLE
-
 export const createRole = (roleCredential) => {
     return async (dispatch) => {
         try {
@@ -692,54 +813,233 @@ export const deleteChallenge = (challengeId) => {
 }
 
 
-export const createWorkflow = (data) => {
-    return {
-        type: "SET_WORKFLOW",
-        payload: data
+//WORKFLOW
+export const addWorkflow = (workflowData) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/workflow`,
+                data: workflowData
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_WORKFLOW",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in addWorkflow", err.response.data)
+        }
     }
 }
 
+export const getWorkflow = (workspaceId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: `${urlHelper}/user/workflow/${workspaceId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_WORKFLOWS",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getWorkflow", err.response.data)
+        }
+    }
+}
 
-
-//RESET PASSWORD
-export const resetPassword = (userCredentials) => {
+export const updateWorkflow = (workflowData,workflowId) => {
     return async (dispatch) => {
         try {
             dispatch(loaderHelper(true))
             const { data } = await axios({
                 method: 'Put',
-                url: `${urlHelper}/password/change`,
-                data: userCredentials
+                url: `${urlHelper}/user/workflow/${workflowId}`,
+                data:workflowData
             })
-            dispatch(loaderHelper(false))
+            if (data.success) {
+                dispatch({
+                    type: "UPDATE_WORKFLOW",
+                    payload: data.result
+                })
+            }
         }
         catch (err) {
             dispatch(loaderHelper(false))
-            console.log("Error in resetPassword", err.response)
+            console.log("Error in updateWorkflow", err.response.data)
+        }
+    }
+}
+
+export const deleteWorkflow = (workflowId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Delete',
+                url: `${urlHelper}/user/workflow/${workflowId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "DELTE_WORKFLOW",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in deleteWorkflow", err.response.data)
+        }
+    }
+}
+
+export const getWorkflowById = (workflowId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: `${urlHelper}/user/workflow/${workflowId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_WORKFLOW",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in deleteWorkflow", err.response.data)
+        }
+    }
+}
+
+// STAGE
+export const addStage = (stageData) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/stage`,
+                data: stageData
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_STAGE",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in addStage", err.response.data)
+        }
+    }
+}
+
+export const getStage = (workflowId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: `${urlHelper}/user/stage/${workflowId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_STAGES",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getStage", err.response.data)
+        }
+    }
+}
+
+export const updateStage = (stageData, stageId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Put',
+                url: `${urlHelper}/user/stage/${stageId}`,
+                data: stageData
+            })
+            if (data.success) {
+                dispatch({
+                    type: "UPDATE_STAGE",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in updateStage", err.response.data)
+        }
+    }
+}
+
+export const deleteStage = (stageId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Delete',
+                url: `${urlHelper}/user/stage/${stageId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "DELETE_STAGE",
+                    payload: data.result
+                })
+                alert(`${data.result.stageName} deleted successfully`)
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in deleteStage", err.response.data)
+        }
+    }
+}
+
+export const getStageById = (stageId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: 'Get',
+                url: `${urlHelper}/user/workflow/${stageId}`,
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_STAGE",
+                    payload: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getStageById", err.response.data)
         }
     }
 }
 
 
-//USER LOGOUT
-export const userLogout = (history) => {
-    return (dispatch) => {
-        localStorage.removeItem('ideaDeveloperUserToken');
-        setAuthToken(false);
-        dispatch({
-            type: "USER_LOGOUT"
-        });
-        history.push('/')
-    }
-}
 
 
-export const tokenExpireHelper = () => {
-    return (dispatch) => {
-        localStorage.removeItem('ideaDeveloperUserToken');
-        setAuthToken(false);
-        dispatch({
-            type: "USER_LOGOUT"
-        });
-    }
-}

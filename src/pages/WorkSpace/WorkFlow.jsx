@@ -1,22 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState , useEffect} from 'react'
 import {useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 import { Modal, Button, Form, Card } from 'react-bootstrap'
 import SideNav from '../../components/SideNav'
 
-import {createWorkflow} from '../../redux/actions/userAction'
+import { addWorkflow, getWorkflow } from '../../redux/actions/userAction'
+import Loader from '../../components/Loader'
 
 
 const WorkFlow = () => {
-    const workflows = useSelector(store => store.userRoot.workflows)
+    const userData = useSelector(store => store.userRoot)
+    const { currentWorkspace, workflows, loader} = userData
     const dispatch = useDispatch()
+    const history = useHistory()
     const [show, setShow] = useState(false)
     const [workflowName, setWorkflowName] = useState("")
 
+    useEffect(() => {
+        if (currentWorkspace) {
+            dispatch(getWorkflow(currentWorkspace._id))
+        }
+        else {
+            history.push('/dashboard')
+        }
+    }, [currentWorkspace])
+
     const formHandler = (e) => {
         e.preventDefault()
-        dispatch(createWorkflow({ workflowName, challengeStage:"3", ideaStage:"4" }))
+        if (currentWorkspace) {
+            dispatch(addWorkflow({ workflowName, workspaceId: currentWorkspace._id}))
+        }
         setTimeout(() => {
             setShow(false)
         },800)
@@ -54,26 +68,25 @@ const WorkFlow = () => {
                     </div>
                     <div className="col-md-8">
                         <h3>Challenge Work Flow</h3>
-                        <div className="row">
+                        {!loader ? <div className="row">
                             {workflows.length !== 0 ? workflows.map((workFlow, index) =>
                                 <div key={index} className="col-md-4 mb-5">
-                                        <Card
-                                            bg='info'
-                                            text='white'
-                                            style={{ width: '18rem', display: "inline-block" }}
-                                            className="mb-2"
-                                        >
+                                    <Card
+                                        bg='info'
+                                        text='white'
+                                        style={{ width: '18rem', display: "inline-block" }}
+                                        className="mb-2"
+                                    >
                                         <Card.Header>{workFlow.workflowName.toUpperCase()}</Card.Header>
-                                            <Card.Body>
+                                        <Card.Body>
                                             <Card.Title className="my-auto" >Challenge Stage: {workFlow.challengeStage} </Card.Title>
                                             <Card.Title className="my-auto" >Idea Stage: {workFlow.ideaStage} </Card.Title>
-                                            <Button as={Link} to="/editWorkflow" variant="dark">View</Button>
-                                            </Card.Body>
-                                        </Card>
-                                </div>): <h2>No Workflow to show</h2>}
-                            
-
-                        </div>
+                                            <Button as={Link} to={`/workflow/${workFlow._id}`} variant="dark">View</Button>
+                                        </Card.Body>
+                                    </Card>
+                                </div>) : <h2>No Workflow to show</h2>}
+                        </div>: <Loader />}
+                        
                         <div className="row">
                             <div className="text-right">
                                 <button onClick={(e) => setShow(true)} className="btn btn-info">Add New WorkFlow</button>

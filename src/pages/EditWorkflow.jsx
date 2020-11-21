@@ -1,31 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SideNav from '../components/SideNav'
 import { Col, Row, Modal, Form, FormGroup } from 'react-bootstrap'
 import { Button } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
-import { addStageHelper } from '../redux/actions/userAction'
+import { addStage,getStage } from '../redux/actions/userAction'
 import WorkFlow from '../components/Workflow'
+import Loader from '../components/Loader'
 
 
-const EditWorkflow = () => {
+const EditWorkflow = (props) => {
     const userData = useSelector(store => store.userRoot)
+    const {stages, loader} = userData
+    const {workflowId} = props.match.params
     const dispatch = useDispatch()
     const [show, setShow] = useState(false)
-    const [stage, setStage] = useState({
-        stageName: "", rules: {}
-       
-    })
-   
+    const [stageName, setStageName] = useState("")
+    const [ideationStage, setIdeationStage] = useState(false)
+
+    const ideationSwitchHelper = (e) => {
+        if (e.target.value === "on") {
+            setIdeationStage(true)
+        }
+    }
+    useEffect(() => {
+        dispatch(getStage(workflowId))
+    }, [workflowId])
+    
     const formHandler = (e) => {
         e.preventDefault()
-        dispatch(addStageHelper(stage))
+        dispatch(addStage({stageName,ideationStage,workflowId}))
         setTimeout(() => {
             setShow(false)
         }, 300)
-        setStage({ ...stage, stageName: "" })
+        setStageName("")
+        setIdeationStage(false)
     }
-
-   
 
     return (
         <>
@@ -37,10 +46,10 @@ const EditWorkflow = () => {
                     <Form onSubmit={formHandler}>
                         <FormGroup>
                             <Form.Label>Stage Name</Form.Label>
-                            <Form.Control type="text" onChange={(e) => setStage({ ...stage, stageName: e.target.value })} value={stage.stageName} />
+                            <Form.Control type="text" onChange={(e) => setStageName(e.target.value)} value={stageName} />
                         </FormGroup>
                         <FormGroup>
-                            <Form.Check label="Is this is ideation stage?" type="switch" id="custom-switch" />
+                            <Form.Check label="Is this is ideation stage?" onChange={(e)=>ideationSwitchHelper(e)} type="switch" id="custom-switch" />
                         </FormGroup>
                         <Button variant="contained" color="secondary" onClick={() => setShow(false)}>
                             Cancel
@@ -65,13 +74,16 @@ const EditWorkflow = () => {
                             <Button onClick={() => setShow(true)} className="ml-auto" variant="dark">ADD STAGE</Button>
                         </Row>
                         <Row>
-                            <Col md={12}>
-                            {userData.stages.length !== 0 ? 
-                                    userData.stages.map((stg, index) =>
-                                    <WorkFlow setShowModal={setShow} stage={stg} key={index}/>
-                                )
-                                    : <h2>No stage to show, Kindly Add</h2>}
+                            {loader ? <Loader /> : 
+                                <Col md={12}>
+                                    {stages.length !== 0 ?
+                                        stages.map((stg, index) =>
+                                            <WorkFlow setShowModal={setShow} stage={stg} key={index} />
+                                        )
+                                        : <h2>No stage to show, Kindly Add</h2>}
                                 </Col>
+                             }
+                           
                         </Row>
 
                     </Col>

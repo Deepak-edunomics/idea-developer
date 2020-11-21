@@ -2,24 +2,25 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useHistory } from 'react-router-dom'
 import Loader from './Loader'
-import { userLogin, showLoginModalHelper } from '../redux/actions/userAction'
+import { userLogin, userLogoutFlagHelper } from '../redux/actions/userAction'
 import { Modal, Button } from 'react-bootstrap'
 import classnames from 'classnames'
 
-const LoginForm = (props) => {
+const LoginForm = ({showloginModal, setShowLoginModal}) => {
     const userData = useSelector(store => store.userRoot)
     const errorData = useSelector(store=>store.errorRoot)
     const dispatch = useDispatch()
     const history = useHistory()
 
+    const {loginFlag} = userData
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loginErrors, setLoginErrors] = useState('')
 
-
     const formHandler = (e) => {
         e.preventDefault()
-        dispatch(userLogin({ email, password },history))
+        dispatch(userLogin({ email, password }, history))
     }
 
     useEffect(() => {
@@ -29,7 +30,7 @@ const LoginForm = (props) => {
     }, [errorData])
     return (
         <>
-         <Modal show={userData.showLoginModal} onHide={()=>dispatch(showLoginModalHelper(false))}>
+         <Modal show={showloginModal} onHide={()=>setShowLoginModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>LOGIN</Modal.Title>
                 </Modal.Header>
@@ -52,11 +53,14 @@ const LoginForm = (props) => {
                             })} id="passwordLoginId" />
                         {loginErrors.password && (<div className="invalid-feedback">{loginErrors.password}</div>)}
                     </div>
+                    {loginFlag ? <div class="alert alert-success" role="alert">
+                        Redirecting you to dashboard ...
+</div>: null}
                     {userData.loader ? <Loader /> : <button type="submit" className="btn btn-primary">Submit</button>}
-                    <Link to="/forgotPassword" > Forgot Password ?</Link>
+                    <Link   to="/forgotPassword" onClick={()=>setShowLoginModal(false)} > Forgot Password ?</Link>
                 </form></Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => dispatch(showLoginModalHelper(false))}>
+                    <Button variant="secondary" onClick={()=>setShowLoginModal(false)}>
                     Close
           </Button>
                 </Modal.Footer>

@@ -1,37 +1,37 @@
 import React, { useState, Fragment } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { v4 as uuidv4 } from 'uuid';
-import Comments from './Rules/Comments'
-import Views from './Rules/Views'
-import Collaborators from './Rules/Collaborators'
-import Ratings from './Rules/Rating'
-import Votes from './Rules/Votes'
 
-//Ayush
+//REACT-BOOTSTRAP
+import { Form } from 'react-bootstrap'
+
+// MATERIAL UI
+import CancelIcon from '@material-ui/icons/Cancel'
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import AddIcon from "@material-ui/icons/Add";
 
+// RULES
+import Comments from './Rules/Comments'
+import Views from './Rules/Views'
+import Collaborators from './Rules/Collaborators'
+import Ratings from './Rules/Rating'
+import Votes from './Rules/Votes'
+import ShortAnswer from '../components/Rules/ShortAnswer'
+import LongAnswer from '../components/Rules/LongAnswer'
 
-
-//
-import InputText from './FormHelper/InputText'
+//FORM_HELPER
 import CheckBox from './FormHelper/CheckBox'
 import Slider from './FormHelper/Slider'
 
+// ACTION
+import { deleteStage } from '../redux/actions/userAction'
 
-const Workflow = ({stage}) => {
-    const [rules, setRules] = useState({
-        comments: { add: false, value: "" },
-        views: { add: false, value: "" },
-        collaborators: { add: false, value: "" },
-        ratings: { add: false, value: "" },
-        votes: { add: false, value: "" },
-        checkbox: { add: false, options: [{ value: "", _id: uuidv4() }], question: "", answer: "", point: "" },
-        slider: { add: false, value: "" },
-    })
-
+const Workflow = ({ stage }) => {
+    const [newRules, setNewRules] = useState([])
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const dispatch = useDispatch()
 
     const handleClick1 = (event) => {
         setAnchorEl(event.currentTarget);
@@ -41,65 +41,194 @@ const Workflow = ({stage}) => {
         setAnchorEl(null);
     };
 
+    //HANDLERCLICK HANDLER
     const handleClick = (data) => {
-        if (data.type === "comments") {
-            setRules({ ...rules, comments: { ...rules.comments, add: true } })
+        if (data.type === "comment") {
+            const tempValue = newRules.find(obj => obj.type === "comment")
+            if (!tempValue) {
+                setNewRules([...newRules, { type: "comment", _id: uuidv4(), value: "" }])
+                setAnchorEl(null)
+            }
+            setAnchorEl(null)
+
+        }
+        if (data.type === "view") {
+            const tempValue = newRules.find(obj => obj.type === "view")
+            if (!tempValue) {
+                setNewRules([...newRules, { type: "view", _id: uuidv4(), value: "" }])
+                setAnchorEl(null)
+            }
             setAnchorEl(null)
         }
-        if (data.type === "views") {
-            setRules({ ...rules, views: { ...rules.views, add: true }})
+        if (data.type === "collaborator") {
+            const tempValue = newRules.find(obj => obj.type === "collaborator")
+            if (!tempValue) {
+                setNewRules([...newRules, { type: "collaborator", _id: uuidv4(), value: "" }])
+                setAnchorEl(null)
+            }
             setAnchorEl(null)
         }
-        if (data.type === "collaborators") {
-            setRules({ ...rules, collaborators: { ...rules.collaborators, add: true }})
+        if (data.type === "rating") {
+            const tempValue = newRules.find(obj => obj.type === "rating")
+            if (!tempValue) {
+                setNewRules([...newRules, { type: "rating", _id: uuidv4(), value: "" }])
+                setAnchorEl(null)
+            }
             setAnchorEl(null)
         }
-        if (data.type === "ratings") {
-            setRules({ ...rules, ratings: { ...rules.ratings, add: true }})
-            setAnchorEl(null)
-        }
-        if (data.type === "votes") {
-            setRules({ ...rules, votes: { ...rules.votes, add: true }})
+        if (data.type === "vote") {
+            const tempValue = newRules.find(obj => obj.type === "vote")
+            if (!tempValue) {
+                setNewRules([...newRules, { type: "vote", _id: uuidv4(), value: "" }])
+                setAnchorEl(null)
+            }
             setAnchorEl(null)
         }
         if (data.type === "checkbox") {
-            setRules({ ...rules, checkbox: { ...rules.checkbox, add: true }})
+            setNewRules([...newRules, { type: "checkbox", _id: uuidv4(), options: [{ value: "", _id: uuidv4() }], value: "" }])
+            setAnchorEl(null)
             setAnchorEl(null)
         }
         if (data.type === "slider") {
-            setRules({ ...rules, slider: { ...rules.slider, add: true } })
+            setNewRules([...newRules, {
+                type: "slider", _id: uuidv4(),
+                min: 0, max: 5, minLabel: "", maxLabel: "",
+                question: "", value: ""
+            }])
             setAnchorEl(null)
         }
-        
-
-    }
-
-    const checkboxOptionsHandler = () => {
-        const newOption = { value: "", _id: uuidv4() }
-        setRules({
-            ...rules,
-            checkbox:{...rules.checkbox, options: [newOption, ...rules.checkbox.options]}
-        })
-    }
-
-    const removeOptionHandler = (_id) => {
-        const updatedOptions = rules.checkbox.options.filter(opt => opt._id !== _id)
-        if (updatedOptions) {
-            setRules({ ...rules, checkbox: { ...rules.checkbox, options: updatedOptions } })
+        if (data.type === "short-answer") {
+            setNewRules([...newRules, { type: "short-answer", _id: uuidv4(), question: "", answer: "" }])
+            setAnchorEl(null)
+        }
+        if (data.type === "long-answer") {
+            setNewRules([...newRules, { type: "long-answer", _id: uuidv4(), question: "", answer: "" }])
+            setAnchorEl(null)
+            setAnchorEl(null)
         }
     }
 
+    //SHORT ANSWER HANDLER
+    const setShortAnswer = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, answer: value }])
+    }
+    const setShortQuestion = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, question: value }])
+    }
+
+
+    //LONG ANSWER HANDLER
+    const setLongAnswer = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, answer: value }])
+    }
+    const setLongQuestion = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, question: value }])
+    }
+
+
+    //TEXT-HANDLER
+    const setTextHandler = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, value: value }])
+    }
+
+    //REMOVE_RULE_HANDLER
+    const removeHandler = (_id) => {
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules])
+    }
+
+    //CHECKBOX ADD OPTIONS HANDLER
+    const checkboxOptionsHandler = () => {
+        const newOption = { value: "", _id: uuidv4() }
+        const tempCheckbox = newRules.find(obj => obj.type === "checkbox")
+        tempCheckbox.options.push(newOption)
+        const filteredRules = newRules.filter(obj => obj.type !== "checkbox")
+        setNewRules([...filteredRules, tempCheckbox])
+    }
+
+    //CHECKBOX REMOVE OPTIONS HANDLER
+    const removeOptionHandler = (_id) => {
+        const tempCheckbox = newRules.find(obj => obj.type === "checkbox")
+        const updatedOptions = tempCheckbox.options.filter(opt => opt._id !== _id)
+        if (updatedOptions) {
+            tempCheckbox.options = updatedOptions
+            // DRY
+            const filteredRules = newRules.filter(obj => obj.type !== "checkbox")
+            setNewRules([...filteredRules, tempCheckbox])
+        }
+    }
+
+    //CHECKBOX OPTION TEXT HANDLER
     const setText = (text, _id) => {
         const newObj = {
             value: text,
             _id
         }
-        const particularOption = rules.checkbox.options.filter(opt => opt._id !== _id)
-        setRules({ ...rules, checkbox: { ...rules.checkbox, options: [...particularOption, newObj] } })
+        const tempCheckbox = newRules.find(obj => obj.type === "checkbox")  // Object
+        const allOptions = tempCheckbox.options.filter(opt => opt._id !== _id)
+        allOptions.push(newObj)
+        tempCheckbox.options = allOptions
+        const filteredRules = newRules.filter(obj => obj.type !== "checkbox")
+        setNewRules([...filteredRules, tempCheckbox])
     }
+
+    //DELETE STAGE HANDLER
+    const deleteStageHandler = () => {
+        dispatch(deleteStage(stage._id))
+    }
+
+    //SLIDER SET QUESTION
+    const setSliderQuestion = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, question: value }])
+    }
+
+    //SLIDER SET MIN
+    const setSliderMin = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, min: value }])
+    }
+
+    //SLIDER SET MAX
+    const setSliderMax = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, max: value }])
+    }
+
+    //SLIDER SET MIN LABEL
+    const setSliderMinLabel = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, minLabel: value }])
+    }
+
+    //SLIDER SET MAX LABEL
+    const setSliderMaxLabel = (value, _id) => {
+        const tempValue = newRules.find(obj => obj._id === _id)
+        const filteredRules = newRules.filter(obj => obj._id !== _id)
+        setNewRules([...filteredRules, { ...tempValue, maxLabel: value }])
+    }
+
+
+    const ruleFormHandler = () => {
+        console.log("newRules", newRules)
+    }
+   
     return (
         <Fragment>
-
             <div className="mt-3 shadow-sm px-3 py-3 w-100">
                 <h3 className="text-success">{stage.stageName}
                     <Button
@@ -109,6 +238,14 @@ const Workflow = ({stage}) => {
                     >
                         Add Rules <AddIcon />
                     </Button>
+                    <Button
+                        aria-controls="simple-menu"
+                        aria-haspopup="true"
+                        color="secondary"
+                        onClick={deleteStageHandler}
+                    >
+                        Delete
+                    </Button>
                     <Menu
                         id="simple-menu"
                         anchorEl={anchorEl}
@@ -116,38 +253,70 @@ const Workflow = ({stage}) => {
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
                     >
-                        <MenuItem onClick={() => handleClick({ type: 'checkbox', values: 0 })}>CheckBox</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: 'checkbox' })}>CheckBox</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: 'short-answer' })}>Short Answer</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: 'long-answer' })}>Long Answer</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: "comment" })}>Min No of Comments</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: 'view' })}>Min No of View</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: 'vote' })}>Min No of votes</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: 'collaborator' })}>Min No of Collaborators</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: 'rating' })}>Min No of ratings</MenuItem>
                         <MenuItem onClick={handleClose}>Radio</MenuItem>
-                        <MenuItem onClick={handleClose}>Short Answer</MenuItem>
-                        <MenuItem onClick={handleClose}>Long Answer</MenuItem>
-                        <MenuItem onClick={() => handleClick({ type: 'slider', values: 0 })}>Slider</MenuItem>
-                        <MenuItem onClick={() => handleClick({ type: 'comments', values: 0 })}>Min No of Comments</MenuItem>
-                        <MenuItem onClick={() => handleClick({ type: 'views', values: 0 })}>Min No of View</MenuItem>
-                        <MenuItem onClick={() => handleClick({ type: 'votes', values: 0 })}>Min No of votes</MenuItem>
-                        <MenuItem onClick={() => handleClick({ type: 'collaborators', values: 0 })}>Min No of Collaborators</MenuItem>
-                        <MenuItem onClick={() => handleClick({ type: 'ratings', values: 0 })}>Min No of ratings</MenuItem>
+                        <MenuItem onClick={() => handleClick({ type: 'slider' })}>Slider</MenuItem>
                     </Menu>
                 </h3>
-              
-                {console.log("rukes",rules)}
-                    {rules.comments.add ? <Comments /> : null}
-                    {rules.views.add ? <Views /> : null}
-                    {rules.collaborators.add && <Collaborators />}
-                    {rules.votes.add && <Votes />}
-                    {rules.ratings.add && <Ratings />}
-                     {rules.checkbox.add && <>
-                    <InputText />
-                    {rules.checkbox.options.map((val, index) =>
-                        <CheckBox removeOptionHandler={removeOptionHandler} setText={setText} value={val} key={val._id}/>
-                        )}
-                    <Button onClick={checkboxOptionsHandler}>Add More Options</Button>
-                </>}
-                {rules.slider.add && <Slider />}
-                
-               
+
+                {newRules.map(obj => {
+                    switch (obj.type) {
+                        case "comment":
+                            return <Comments setCommentText={setTextHandler}
+                                removeComment={removeHandler} comment={obj} />
+
+                        case "view":
+                            return <Views setViewText={setTextHandler} removeView={removeHandler} view={obj} />
+
+                        case "collaborator":
+                            return <Collaborators setCollaboratorText={setTextHandler}
+                                removeCollaborator={removeHandler} collaborator={obj} />
+
+                        case "vote":
+                            return <Votes setVoteText={setTextHandler} removeVote={removeHandler} vote={obj} />
+
+                        case "rating":
+                            return <Ratings setRatingText={setTextHandler} removeRating={removeHandler}
+                                rating={obj} />
+
+                        case "checkbox":
+                            return <>
+                                <Form.Control onChange={(e) => setTextHandler(e.target.value, obj._id)} value={obj.value} type="text" />
+                                {obj.options.map(val =>
+                                    <CheckBox removeOptionHandler={removeOptionHandler} setText={setText} value={val} key={val._id} />
+                                )}
+                                <Button onClick={checkboxOptionsHandler}>Add More Options</Button>
+                                <CancelIcon onClick={() => removeHandler(obj._id)} />
+
+                            </>
+                        case "short-answer":
+                            return <ShortAnswer setShortAnswer={setShortAnswer} setShortQuestion={setShortQuestion}
+                                shortAnswer={obj} removeShortAnswer={removeHandler} />
+
+                        case "long-answer":
+                            return <LongAnswer setLongAnswer={setLongAnswer} setLongQuestion={setLongQuestion}
+                                longAnswer={obj} removeLongAnswer={removeHandler} />
+                        case "slider":
+                            return <Slider slider={obj} setSliderQuestion={setSliderQuestion}
+                                setSliderMax={setSliderMax} setSliderMin={setSliderMin}
+                                setSliderMaxLabel={setSliderMaxLabel} setSliderMinLabel={setSliderMinLabel}
+                                removeHandler={removeHandler}
+                            />
+                    }
+                })}
+
+                {newRules.length !== 0 ? <button onClick={ruleFormHandler} type="button" className="btn btn-primary">SAVE</button>
+                : null}
             </div>
         </Fragment>
-       
+
     )
 }
 

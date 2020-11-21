@@ -1,9 +1,14 @@
+
 const initialState = {
-    showLoginModal: false,
-    showSignupModal: false,
     user: null,
     isVerified: false,
     loader: false,
+    passworUpdateFlag: false,
+    loginFlag: false,
+    registerFlag: false,
+    logoutFlag: false,
+    forgotPasswordFlag: false,
+    postOTPflag:false,
     workspaces: [], 
     employees: [],
     roles: [],
@@ -19,20 +24,30 @@ const initialState = {
 
 const userReducer = (state = initialState, action) => {
     switch (action.type) {
-        case "SET_SIGNUP_MODAL":
+        case "SET_LOGOUT_FLAG":
             return {
                 ...state,
-                showSignupModal: action.payload
+                logoutFlag: action.payload
             }
-        case "SET_LOGIN_MODAL":
+        case "SET_LOGIN_FLAG":
             return {
                 ...state,
-                showLoginModal: action.payload
+                loginFlag: action.payload
+            }
+        case "SET_UPDATE_PASSWORD_FLAG":
+            return {
+                ...state,
+                passworUpdateFlag: action.payload
             }
         case "SET_LOADER":
             return {
                 ...state,
                 loader: action.payload
+            }
+        case "SET_FORGOT_PASSWORD_FLAG":
+            return {
+                ...state,
+                forgotPasswordFlag: action.payload
             }
         case "SET_USERS_DATA":
             return {
@@ -61,7 +76,6 @@ const userReducer = (state = initialState, action) => {
                 loader: false
             }
         case "SET_WORKSPACES":
-            console.log("as",action.payload)
             return {
                 ...state,
                 workspaces: action.payload,
@@ -71,7 +85,7 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 workspaces: state.workspaces.filter(obj => {
-                    return obj._id !== action.payload
+                    return obj._id !== action.payload._id
                 }),
                 loader: false
             } 
@@ -108,7 +122,7 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 employees: state.employees.filter(obj => {
-                    return obj._id !== action.payload
+                    return obj._id !== action.payload._id
                 }),
                 loader: false
             }
@@ -154,6 +168,20 @@ const userReducer = (state = initialState, action) => {
                 workflows: action.payload,
                 loader: false
             }
+        case "UPDATE_WORKFLOW":
+            return {
+                ...state,
+                workflows: state.workflows.map(workflow => workflow._id === action.payload._id ? action.payload : workflow),
+                loader: false
+            }
+        case "DELETE_WORKFLOW":
+            return {
+                ...state,
+                workflows: state.workflows.filter(obj => {
+                    return obj._id !== action.payload._id
+                }),
+                loader: false
+            }
         case "ADD_STAGE":
             return {
                 ...state,
@@ -181,7 +209,7 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 ideas: state.ideas.filter(obj => {
-                    return obj._id !== action.payload
+                    return obj._id !== action.payload._id
                 }),
                 loader: false
             }
@@ -207,7 +235,33 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 challenges: state.challenges.filter(obj => {
-                    return obj._id !== action.payload
+                    return obj._id !== action.payload._id
+                }),
+                loader: false
+            }
+        case "SET_STAGE":
+            return {
+                ...state,
+                stages: [...state.stages, action.payload],
+                loader: false
+            }
+        case "SET_STAGES":
+            return {
+                ...state,
+                stages: action.payload,
+                loader: false
+            }
+        case "UPDATE_STAGE":
+            return {
+                ...state,
+                stages: state.stages.map(stage => stage._id === action.payload._id ? action.payload : stage),
+                loader: false
+            }
+        case "DELETE_STAGE":
+            return {
+                ...state,
+                stages: state.stages.filter(obj => {
+                    return obj._id !== action.payload._id
                 }),
                 loader: false
             }

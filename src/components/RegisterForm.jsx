@@ -9,7 +9,7 @@ import Loader from './Loader'
 import { userRegister, emailVerification, showSignupModalHelper } from '../redux/actions/userAction'
 
 
-const RegisterForm = () => {
+const RegisterForm = ({showRegisterModal, setShowRegisterModal}) => {
     const userData = useSelector(store => store.userRoot)
     const errorData = useSelector(store => store.errorRoot)
 
@@ -61,6 +61,7 @@ const RegisterForm = () => {
             setMismatch(false)
             dispatch(userRegister({ firstName, lastName, organization, email, password }))
             setShowEmailVerificationModal(true)
+
         }
     }
 
@@ -68,7 +69,11 @@ const RegisterForm = () => {
     const otpSubmitHandler = (e) => {
         e.preventDefault()
         dispatch(emailVerification({ email: emailForVerification, otp: OTP }, history))
-        console.log("papa")
+        setTimeout(() => {
+            setShowEmailVerificationModal(false) 
+        },400)
+        
+       
     }
     return (
         <>
@@ -108,7 +113,7 @@ const RegisterForm = () => {
                 </Modal.Footer>
             </Modal>
             
-            <Modal show={userData.showSignupModal} onHide={() => dispatch(showSignupModalHelper(false))}>
+            <Modal show={showRegisterModal} onHide={()=>setShowRegisterModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>SIGNUP</Modal.Title>
                 </Modal.Header>
@@ -174,7 +179,7 @@ const RegisterForm = () => {
                     
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => dispatch(showSignupModalHelper(false))}>
+                    <Button variant="secondary" onClick={()=>setShowRegisterModal(false)}>
                         Close
           </Button>
                 </Modal.Footer>
