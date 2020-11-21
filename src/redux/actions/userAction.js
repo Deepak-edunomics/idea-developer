@@ -42,9 +42,9 @@ const verifyUserHelper = (data) => {
 
 // const urlHelper = "http://idea.cxdeployer.com/api"
 
-const urlHelper = 'http://127.0.0.1:3001/api'
+// const urlHelper = 'http://127.0.0.1:3001/api'
 
-// const urlHelper = "https://idea-deployer.herokuapp.com/api"
+const urlHelper = "https://idea-deployer.herokuapp.com/api"
 
 // USER
 export const userRegister = (userRegisterCredentials) => {
