@@ -8,6 +8,7 @@ const initialState = {
     registerFlag: false,
     logoutFlag: false,
     forgotPasswordFlag: false,
+    userVerifiedFlag: false,
     postOTPflag:false,
     workspaces: [], 
     employees: [],
@@ -61,6 +62,11 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 isVerified: action.payload,
                 loader: false
+            }
+        case "SET_USER_VERIFIED_FLAG":
+            return {
+                ...state,
+                userVerifiedFlag: action.payload
             }
         case "DELETE_USERS_DATA":
             return {

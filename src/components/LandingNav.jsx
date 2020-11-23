@@ -10,7 +10,7 @@ import RegisterModal from './RegisterForm'
 
 const LandingNav = (props) => {
     const userData = useSelector(store => store.userRoot)
-    const {user, isVerified, loginFlag} = userData
+    const {user, isVerified, loginFlag, userVerifiedFlag} = userData
     const dispatch = useDispatch()
     const [logoutModal, setLogoutModal] = useState(false)
     const [updatePasswordModal, setUpdatePasswordModal] = useState(false)
@@ -24,6 +24,15 @@ const LandingNav = (props) => {
             }, 300)
         }
     }, [loginFlag])
+
+    useEffect(() => {
+        if (userVerifiedFlag) {
+            setTimeout(() => {
+                setShowRegisterModal(false)
+            }, 300)
+        }
+    }, [userVerifiedFlag])
+   
 
     return (
         <>

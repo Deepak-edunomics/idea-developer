@@ -49,6 +49,12 @@ const RegisterForm = ({showRegisterModal, setShowRegisterModal}) => {
     }, [userData.user])
 
 
+    useEffect(() => {
+        if (!showRegisterModal) {
+            setShowEmailVerificationModal(false)
+        }
+    },[showRegisterModal])
+
     
 
 
@@ -69,10 +75,6 @@ const RegisterForm = ({showRegisterModal, setShowRegisterModal}) => {
     const otpSubmitHandler = (e) => {
         e.preventDefault()
         dispatch(emailVerification({ email: emailForVerification, otp: OTP }, history))
-        setTimeout(() => {
-            setShowEmailVerificationModal(false) 
-        },400)
-        
        
     }
     return (

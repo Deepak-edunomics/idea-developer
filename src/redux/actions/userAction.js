@@ -31,12 +31,6 @@ const loaderHelper = (data) => {
     }
 }
 
-const verifyUserHelper = (data) => {
-    return {
-        type: "VERIFY_USER",
-        payload: data
-    }
-}
 
 
 
@@ -70,9 +64,7 @@ export const userRegister = (userRegisterCredentials) => {
                 type: "SET_USER_REGISTER_ERRORS",
                 payload: err.response.data
             })
-
         }
-       
     }
 }
 
@@ -117,6 +109,21 @@ export const userLogin = (userLoginCredentials,history) => {
     }
 }
 
+const verifyUserHelper = (data) => {
+    return {
+        type: "VERIFY_USER",
+        payload: data
+    }
+}
+
+
+const setUserVerifiedFlagHelper = (data) => {
+    return {
+        type: "SET_USER_VERIFIED_FLAG",
+        payload: data
+    }
+}
+
 export const emailVerification = (otpCredentials, history) => {
     return async (dispatch) => {
         try {
@@ -132,6 +139,10 @@ export const emailVerification = (otpCredentials, history) => {
                 setAuthToken(token)
                 dispatch(userLoginHelper(result))
                 dispatch(verifyUserHelper(true))
+                dispatch(setUserVerifiedFlagHelper(true))
+                setTimeout(() => {
+                    dispatch(setUserVerifiedFlagHelper(false))
+                },2000)
                 history.push('/dashboard')
             }
 
