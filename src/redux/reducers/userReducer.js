@@ -18,7 +18,8 @@ const initialState = {
     stages: [],
     ideas: [],
     challenges: [],
-    currentWorkspace: null
+    currentWorkspace: null,
+    rules: []
 }
 
 
@@ -269,6 +270,18 @@ const userReducer = (state = initialState, action) => {
                 stages: state.stages.filter(obj => {
                     return obj._id !== action.payload._id
                 }),
+                loader: false
+            }
+        case "SET_RULES":
+            return {
+                ...state,
+                rules: action.payload,
+                loader: false
+            }
+        case "SET_RULE":
+            return {
+                ...state,
+                rules: [...state.rules, action.payload],
                 loader: false
             }
         default:

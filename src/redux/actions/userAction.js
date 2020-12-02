@@ -36,9 +36,9 @@ const loaderHelper = (data) => {
 
 // const urlHelper = "http://idea.cxdeployer.com/api"
 
-// const urlHelper = 'http://127.0.0.1:3001/api'
+const urlHelper = 'http://127.0.0.1:3001/api'
 
-const urlHelper = "https://idea-deployer.herokuapp.com/api"
+// const urlHelper = "https://idea-deployer.herokuapp.com/api"
 
 // USER
 export const userRegister = (userRegisterCredentials) => {
@@ -349,8 +349,6 @@ export const updateWorkspace = (workspaceData,workspaceId,history) => {
                     payload: data.result
                 })
                 history.push('/workflow')
-                
-            
             }
         }
         catch (err) {
@@ -769,6 +767,8 @@ export const addChallenge = (challengeCredential) => {
                     type: "SET_CHALLENGE",
                     payload: data.result
                 })
+                alert("Challenge uploaded successfully")
+                console.log("data",data)
             }
         }
         catch (err) {
@@ -1047,6 +1047,53 @@ export const getStageById = (stageId) => {
         catch (err) {
             dispatch(loaderHelper(false))
             console.log("Error in getStageById", err.response.data)
+        }
+    }
+}
+
+//RULES 
+export const addRule = (stageId, rule) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const {data } = await axios({
+                method: 'Post',
+                url: `${urlHelper}/user/rule/${stageId}`,
+                data: rule
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_RULE",
+                    payload: data.result
+                })
+                alert("Rules added successfully")
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in addRule", err.response.data)
+        }
+    }
+}
+
+export const getRules = (stageId) => {
+    return async (dispatch) => {
+        try {
+            dispatch(loaderHelper(true))
+            const { data } = await axios({
+                method: "Get",
+                url: `${urlHelper}/user/rule/${stageId}`
+            })
+            if (data.success) {
+                dispatch({
+                    type: "SET_RULES",
+                    paylad: data.result
+                })
+            }
+        }
+        catch (err) {
+            dispatch(loaderHelper(false))
+            console.log("Error in getRules", err.response.data)
         }
     }
 }

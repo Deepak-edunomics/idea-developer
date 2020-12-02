@@ -4,19 +4,19 @@ import { FormGroup, Form, FormControl } from 'react-bootstrap';
 
 
 export default function Slider({ setSliderMax, setSliderMin, setSliderQuestion,
-    setSliderMaxLabel, setSliderMinLabel, slider, removeHandler }) {
+    setSliderMaxLabel, setSliderMinLabel, slider, removeHandler, setPointsHandler }) {
     return (
         <div>
-            <FormControl onChange={(e)=>setSliderQuestion(e.target.value, slider._id)} type="text" placeholder="Type your question here" />
+            <FormControl onChange={(e)=>setSliderQuestion(e.target.value, slider.ruleId)} type="text" placeholder="Type your question here" />
             <FormGroup >
-                <Form.Control onChange={(e)=>setSliderMin(e.target.value, slider._id)} value={slider.min} as="select">
+                <Form.Control onChange={(e)=>setSliderMin(e.target.value, slider.ruleId)} value={slider.min} as="select">
                     <option>0</option>
                     <option>1</option>
                 </Form.Control>
             </FormGroup>
             <p>to</p>
             <FormGroup >
-                <Form.Control onChange={(e)=>setSliderMax(e.target.value, slider._id)} value={slider.max} as="select">
+                <Form.Control onChange={(e)=>setSliderMax(e.target.value, slider.ruleId)} value={slider.max} as="select">
                     <option>2</option>
                     <option>3</option>
                     <option>4</option>
@@ -29,10 +29,11 @@ export default function Slider({ setSliderMax, setSliderMin, setSliderQuestion,
                 </Form.Control>
             </FormGroup>
             <p>{slider.min }</p>
-            <FormControl onChange={(e) => setSliderMinLabel(e.target.value, slider._id)} value={slider.minLabel} type="text" placeholder="Label" />
+            <FormControl onChange={(e) => setSliderMinLabel(e.target.value, slider.ruleId)} value={slider.minLabel} type="text" placeholder="Label" />
             <p>{slider.max }</p>
-            <FormControl onChange={(e) => setSliderMaxLabel(e.target.value, slider._id)} value={slider.maxLabel} type="text" placeholder="Label" />
-            <CancelIcon onClick={() => removeHandler(slider._id)} />
+            <FormControl onChange={(e) => setSliderMaxLabel(e.target.value, slider.ruleId)} value={slider.maxLabel} type="text" placeholder="Label" />
+            <FormControl className="my-3" onChange={(e)=> setPointsHandler(e.target.value, slider.ruleId)} value={slider.points} type="number" placeholder="Points..." sixe="sm" />
+            <CancelIcon onClick={() => removeHandler(slider.ruleId)} />
         </div>
     );
 }
